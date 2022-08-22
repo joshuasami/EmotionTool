@@ -24,7 +24,7 @@
 
         "correct": {
             "de": "Ist das richtig?",
-            "en": "Is that correct?"
+            "en": "Is this correct?"
         },
 
         "input": {
@@ -36,7 +36,7 @@
     "main-menu":{
         "welcome": {
             "de": "Möchten Sie eine neue Liste auswerten oder klicken? (0 = neu, 1 = alt)",
-            "en": "Do you want to check a new list or 'click' an old one? (0 = new, 1 = old)"
+            "en": "Do you want to code a new list or 'click' an old one? (0 = new, 1 = old)"
         }
     },
 
@@ -51,11 +51,11 @@
         },
         "Over-One-Problem": {
             "de": "Problem: Mehr als 1 Emotionswort geunden",
-            "en": "Problem: More than one Emotion-Word found"
+            "en": "Problem: More than one emotion word found"
         },
         "Nothing-Found-Problem": {
             "de": "Problem: Kein Emotionswort gefunden",
-            "en": "Problem: No Emotion-Word found"
+            "en": "Problem: No emotion word found"
         },
 
         "continue": {
@@ -67,17 +67,17 @@
     "ec": {
         "emotionsfound": {
             "de": "Gefundene Emotionen:",
-            "en": "Emotions found:"
+            "en": "emotion words found:"
         },
 
         "own-input": {
             "de": "eigene Eingabe",
-            "en": "own Input"
+            "en": "new Input"
         },
 
         "99": {
             "de": "kein Emotionswort (99)",
-            "en": "no Emotionword (99)"
+            "en": "no emotion word (99)"
         },
 
         "next": {
