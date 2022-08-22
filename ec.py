@@ -56,23 +56,23 @@ def ECMain(allText, lib):
 
         print("")
 
-        print("[0] - " + allText['general-phrases']['skip'][language])
+        print("[1] - " + allText['general-phrases']['skip'][language])
 
-        print("[1] - " + allText['ec']['own-input'][language])
+        print("[2] - " + allText['ec']['own-input'][language])
 
-        print("[2] - " + allText['ec']['99'][language])
+        print("[3] - " + allText['ec']['99'][language])
 
-        for index in range(3, len(tmpProblem)+ 3):
-            print("[" + str(index) + "] - " + tmpProblem[index-3].emotion)
+        for index in range(4, len(tmpProblem)+ 4):
+            print("[" + str(index) + "] - " + tmpProblem[index-4].emotion)
 
         print("")
 
         eingabe = ""
 
-        while eingabe not in [str(z) for z in range(len(tmpProblem) + 3)]:
+        while eingabe not in [str(z) for z in range(1, len(tmpProblem) + 4)]:
             eingabe = input(allText['general-phrases']['please-choose'][language] + ": ")
 
-        if eingabe == "0":
+        if eingabe == "1":
             
             checker = ""
 
@@ -84,7 +84,7 @@ def ECMain(allText, lib):
 
             continue
 
-        elif eingabe == "2":
+        elif eingabe == "3":
 
             df['Emotion'][i] = "99"
             df['Reduction'][i] = "99"
@@ -94,7 +94,7 @@ def ECMain(allText, lib):
             df['Kodierer'][i]  = coder
             solved.append(i)
 
-        elif eingabe == "1":
+        elif eingabe == "2":
             
             #### Emotion-Input
 
@@ -218,10 +218,10 @@ def ECMain(allText, lib):
 
 
         else:
-            df['Emotion'][i] = tmpProblem[int(eingabe)-3].emotion
-            df['Reduction'][i] = tmpProblem[int(eingabe)-3].reduction
-            df['Modifikator'][i] = tmpProblem[int(eingabe)-3].modifier
-            df['Negation'][i]  = tmpProblem[int(eingabe)-3].negation
+            df['Emotion'][i] = tmpProblem[int(eingabe)-4].emotion
+            df['Reduction'][i] = tmpProblem[int(eingabe)-4].reduction
+            df['Modifikator'][i] = tmpProblem[int(eingabe)-4].modifier
+            df['Negation'][i]  = tmpProblem[int(eingabe)-4].negation
             df['Problem'][i] = ""
             df['Kodierer'][i]  = coder
             solved.append(i)
