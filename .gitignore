@@ -1,0 +1,9 @@
+lists/
+out/
+in/
+.vscode/
+__pycache__/
+.DS_Store
+Archiv/
+Python-Portable-3.9.6/
+settings.py

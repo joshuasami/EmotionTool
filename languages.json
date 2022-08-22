@@ -1,0 +1,88 @@
+{
+    "general-phrases": {
+        "total": {
+            "de": "gesamt",
+            "en": "total"
+        },
+
+        "skip": {
+            "de": "Überspringen",
+            "en": "skip"
+        },
+
+        "01choice": {
+            "de": "(0 = Nein, 1 = Ja)",
+            "en": "(0 = No, 1 = Yes)"
+
+        },
+        
+        "please-choose": {
+            "de": "Bitte auswählen",
+            "en": "Please choose"
+
+        },
+
+        "correct": {
+            "de": "Ist das richtig?",
+            "en": "Is that correct?"
+        },
+
+        "input": {
+            "de": "Einabge",
+            "en": "Input"
+        }
+    },
+
+    "main-menu":{
+        "welcome": {
+            "de": "Möchten Sie eine neue Liste auswerten oder klicken? (0 = neu, 1 = alt)",
+            "en": "Do you want to check a new list or 'click' an old one? (0 = new, 1 = old)"
+        }
+    },
+
+    "et": {
+        "First-Row-Problem": {
+            "de": "Problem: Emotion in der Verständnisfrage",
+            "en": "Problem: Emotion in the Context-Question"
+        },
+        "No-Reduction-Problem": {
+            "de": "Problem: Keine Reduktion gefunden",
+            "en": "Problem: No reduction found"
+        },
+        "Over-One-Problem": {
+            "de": "Problem: Mehr als 1 Emotionswort geunden",
+            "en": "Problem: More than one Emotion-Word found"
+        },
+        "Nothing-Found-Problem": {
+            "de": "Problem: Kein Emotionswort gefunden",
+            "en": "Problem: No Emotion-Word found"
+        },
+
+        "continue": {
+            "de": "Möchten Sie die Liste nun händisch weiter coden?",
+            "en": "Do you want to continue coding the list?"
+        }
+    },
+
+    "ec": {
+        "emotionsfound": {
+            "de": "Gefundene Emotionen:",
+            "en": "Emotions found:"
+        },
+
+        "own-input": {
+            "de": "eigene Eingabe",
+            "en": "own Input"
+        },
+
+        "99": {
+            "de": "kein Emotionswort (99)",
+            "en": "no Emotionword (99)"
+        },
+
+        "next": {
+            "de": "Nächstes?",
+            "en": "Next One?"
+        }
+    }
+}
