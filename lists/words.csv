@@ -7,7 +7,7 @@ verängstigt,ängstlich
 angstvoll,ängstlich
 angsteinflössend,ängstlich
 ärgerlich,Ärger
-ärgertsich,Ärger
+ärgert sich,Ärger
 ärgerlich,Ärger
 Verägerung,Ärger
 verärgert,Ärger
@@ -25,7 +25,7 @@ Giersucht,begierig
 beruhigt,Beruhigung
 besorgt,besorgt
 Besorgnis,besorgt
-sichsorgend,besorgt
+sich sorgend,besorgt
 Sorge,besorgt
 Sorgen,besorgt
 sorgenvoll,besorgt
@@ -41,8 +41,9 @@ vereinsamt,einsam
 angeekelt,Ekel
 ekelhaft,Ekel
 ekelig,Ekel
+eklig, Ekel
 Ekel,Ekel
-ekeltsich,Ekel
+ekelt sich,Ekel
 geekelt,Ekel
 verekelt,Ekel
 entsetzt,entsetzt
@@ -53,7 +54,7 @@ Enttäuschung,enttäuscht
 erleichtert,Erleichterung
 erschreckt,erschrocken
 erschrocken,erschrocken
-erschrecktsich,erschrocken
+erschreckt sich,erschrocken
 verschreckt,erschrocken
 Schreck,erschrocken
 erstaunt,Erstaunen
@@ -62,9 +63,9 @@ Faszination,Faszination
 freudig,Freude
 erfreut,Freude
 Freude,Freude
-freutsich,Freude
+freut sich,Freude
 gefreut,Freude
-sichfreuen,Freude
+sich freuen,Freude
 froh,froh
 fröhlich,fröhlich
 Fröhlichkeit,fröhlich
@@ -79,7 +80,7 @@ glücklich,glücklich
 glück,glücklich
 Glückseligkeit,glücklich
 gruselig,Grusel
-gruseltsich,Grusel
+gruselt sich,Grusel
 Hoffnung,Hoffnung
 interessiert,interessiert
 Interesse,interessiert
@@ -91,9 +92,9 @@ verliebt,Liebe
 lustvoll,Lust
 lostlos,lustlos
 Lustlosigkeit,lustlos
-keineLust,lustlos
+keine Lust,lustlos
 Mitleid,Mitleid
-leidtun,Mitleid
+leid tun,Mitleid
 blöd,negativ
 böse,negativ
 doof,negativ
@@ -105,7 +106,7 @@ nicht lieb,negativ
 nicht lustig,negativ
 nicht schön,negativ
 nicht toll,negativ
-nich twohl,negativ
+nicht wohl,negativ
 schlecht,negativ
 schrecklich,negativ
 unangenehm,negativ
@@ -126,10 +127,10 @@ freundlich,positiv
 großartig,positiv
 großartig,positiv
 gut,positiv
-gutesGefühl,positiv
+gutes Gefühl,positiv
 lieb,positiv
 lustig,positiv
-nichtschlecht,positiv
+nicht schlecht,positiv
 schön,positiv
 sorglos,positiv
 super,positiv
@@ -144,7 +145,7 @@ reuevoll,Reue
 sauer,sauer
 beschämt,Scham
 schämen,Scham
-schämtsich,Scham
+schämt sich,Scham
 verschämt,Scham
 Scham,Scham
 geschockt,Schock
@@ -181,3 +182,4 @@ Zorn,Zorn
 zornig,Zorn
 erzürnt,Zorn
 eklig,Ekel
+gestresst,Stress
