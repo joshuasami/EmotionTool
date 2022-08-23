@@ -236,13 +236,13 @@ def ECRun(allText, lib, df, problems):
 
         while checker not in ["0", "1"]:
             checker = input(allText['ec']['next'][language] + " " + allText['general-phrases']['01choice'][language])
+        
+        if eingabe == "2":
+            rerun = True
 
         if checker == "0":
             rerun = False
             break
-        
-        elif eingabe == "2":
-            rerun = True
             
     
     if rerun:
