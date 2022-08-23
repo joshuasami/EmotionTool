@@ -12,8 +12,13 @@ def ECMain(allText, lib):
 
     problems, df = checkRows(df, firstIgnore, lib, labels)
 
+    ECRun(allText, lib, df, problems)
 
+
+def ECRun(allText, lib, df, problems):
     i = 0
+
+    rerun = False
 
     solved = []
 
@@ -233,9 +238,22 @@ def ECMain(allText, lib):
             checker = input(allText['ec']['next'][language] + " " + allText['general-phrases']['01choice'][language])
 
         if checker == "0":
+            rerun = False
             break
-
-
+        
+        elif eingabe == "2":
+            rerun = True
+            
+    
+    if rerun:
+        for solve in solved:
+            try:
+                problems.pop(solve)
+            except KeyError:
+                pass
+        
+        ECRun(allText, lib, df, problems)
+        return 0
 
 
     df.to_csv(outFile, sep=";", encoding='utf-8-sig', index= False)
