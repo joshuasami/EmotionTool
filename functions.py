@@ -197,6 +197,7 @@ def checkRows(df, firstIgnore, lib, labels):
                         df['Modifikator'][ind] = i[0].modifier
                         df['Negation'][ind]  = i[0].negation
                         df['Kodierer'][ind]  = "E.T."
+                        df['Problem'][ind]  = ""
             else:
                 problems[ind] = [out, 2]
         else:
