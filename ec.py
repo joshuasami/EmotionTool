@@ -9,7 +9,7 @@ def ECMain(allText, lib, problems, df):
 
     if problems == "" or isinstance(df, str):
 
-        df = pd.read_csv(outFile, sep=";")
+        df = pd.read_csv(outFile, sep=";", encoding='utf-8-sig')
 
         df = df.fillna("")
 
@@ -17,7 +17,6 @@ def ECMain(allText, lib, problems, df):
 
 
     ECRun(allText, lib, df, problems)
-
 
 def ECRun(allText, lib, df, problems):
     i = 0
@@ -51,7 +50,6 @@ def ECRun(allText, lib, df, problems):
             df['Reduction'][i] = "99"
             df['Modifikator'][i] = ""
             df['Negation'][i]  = ""
-            df['Problem'][i] = ""
             df['Kodierer'][i]  = coder
             solved.append(i)
 
@@ -104,7 +102,6 @@ def ECRun(allText, lib, df, problems):
             #### Finalization
 
             df['Kodierer'][i]  = coder
-            df['Problem'][i] = ""
             solved.append(i)
 
 
@@ -113,7 +110,6 @@ def ECRun(allText, lib, df, problems):
             df['Reduction'][i] = tmpProblem[int(eingabe)-4].reduction
             df['Modifikator'][i] = tmpProblem[int(eingabe)-4].modifier
             df['Negation'][i]  = tmpProblem[int(eingabe)-4].negation
-            df['Problem'][i] = ""
             df['Kodierer'][i]  = coder
             solved.append(i)
 
@@ -140,7 +136,6 @@ def ECRun(allText, lib, df, problems):
 
 
     df.to_csv(outFile, sep=";", encoding='utf-8-sig', index= False)
-
 
 def ECPrint(allText, i, problems, df):
 

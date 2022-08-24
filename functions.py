@@ -35,62 +35,46 @@ def getText():
     f.close()
     return out
 
+def checkCombo(list, tmp, emo, line):
+    for word in list:
+        if " ".join(word).casefold() + " " + tmp + emo in line:
+            tmp = " ".join(word) + " " + tmp
+            return checkCombo(list, tmp, emo, line)
+    if tmp.endswith(" "):
+        tmp = tmp[:-1]
+    return tmp
+
 def checkForEmotions(lib, line):
-    doc = str(line).split(" ")
+
     out = []
-    pattern = re.compile('[\W_]+')
-    tmpDoc = [pattern.sub('', token.lower()) for token in doc]
-    
-    
-    counter = 0
-    for token in tmpDoc:
-        if token in lib.words:
-            modifier = ""
-            negation = ""
+
+    if not isinstance(line, str):
+        return out
+
+    for emo in lib.words:
+
+        if re.search(emo.casefold() + "[^a-zA-ZäöüßÄÖÜ]", line.casefold()) or line.casefold().endswith(emo.casefold()):
+
+            modifier = checkCombo(lib.modifiers, "", emo.casefold(), line.casefold())
+            modified_emotion = modifier + " " + emo
+            negation = checkCombo(lib.negations, "", modified_emotion.casefold(), line.casefold())
             reduction = ""
-            #out.append((token, tmp.replace(" ", "")))
-            try:
-                countMod = counter
-                modLooking = True
-                while modLooking:
-                    modLooking = False
-                    for mods in lib.modifiers:
-                        if tmpDoc[countMod-len(mods):countMod] == mods:
-                            #modifier = " ".join(mods) + " " + modifier
-                            countMod = countMod - len(mods)
-                            modLooking = True
-
-                    #if modifier[-1] == " ":
-                    #    modifier = modifier[:-1]
-                modifier = " ".join(tmpDoc[countMod:counter])
-
-
-                for negs in lib.negations:
-                    if tmpDoc[countMod-len(negs):countMod] == negs:
-                        negation += " ".join(tmpDoc[countMod-len(negs):countMod])
-                        countMod = countMod-len(negs)
-            except IndexError:
-                pass
 
             if negation != "":
-                tokenNeg = "nicht " + token
+                tokenNeg = "nicht " + emo
                 if tokenNeg in lib.words:
                     reduction = lib.words[tokenNeg]
                     #token = negation + " " + token
             else:
-                reduction = lib.words[token]
+                reduction = lib.words[emo]
 
             if modifier != "":
-                token = modifier + " " + token
+                emo = modifier + " " + emo
             
             if negation != "":
-                token = negation + " " + token
+                emo = negation + " " + emo
 
-            out.append(emoword(token, reduction, modifier, negation))
-
-
-        counter += 1
-
+            out.append(emoword(emo, reduction, modifier, negation))
     return out
 
 def getSingleWordList(file):
@@ -101,7 +85,7 @@ def getSingleWordList(file):
         out = [row[0].split() for row in reader]
         out.sort(key=len, reverse=True)
 
-    out = [[y.lower() for y in i] for i in out]
+    out = [[y for y in i] for i in out]
     return out
 
 def addSingleWordList(file, liste, newWord):
@@ -115,7 +99,7 @@ def getWordList():
 
     with open('lists/words.csv', mode='r', encoding="utf8") as infile:
         reader = csv.reader(infile)
-        mydict = {rows[0].lower():rows[1].lower() for rows in reader if rows != ""}
+        mydict = {row[0]:row[1] for row in reader if len(row) == 2}
 
     return mydict
 
