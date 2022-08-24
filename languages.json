@@ -50,7 +50,7 @@
             "en": "Problem: No reduction found"
         },
         "Over-One-Problem": {
-            "de": "Problem: Mehr als ein Emotionswort geunden",
+            "de": "Problem: Mehr als ein Emotionswort gefunden",
             "en": "Problem: More than one emotion word found"
         },
         "Nothing-Found-Problem": {
