@@ -114,7 +114,10 @@ def ECRun(allText, lib, df, problems):
             solved.append(i)
 
 
-        checker = checker01(allText)
+        checker = ""
+
+        while checker not in ["0", "1", "2"]:
+            checker = input("\n" + allText['ec']['nextorback'][language])
         
         if eingabe == "2":
             rerun = True
@@ -122,19 +125,31 @@ def ECRun(allText, lib, df, problems):
         if checker == "0":
             rerun = False
             break
+
+        if checker == "2":
+            solved.pop()
+
+            for solve in solved:
+                try:
+                    problems.pop(solve)
+                except KeyError:
+                    pass
+        
+            ECRun(allText, lib, df, problems)
+            return 0
             
     
-    if rerun:
-        for solve in solved:
-            try:
-                problems.pop(solve)
-            except KeyError:
-                pass
+        if rerun:
+            for solve in solved:
+                try:
+                    problems.pop(solve)
+                except KeyError:
+                    pass
         
-        ECRun(allText, lib, df, problems)
-        return 0
+            ECRun(allText, lib, df, problems)
+            return 0
 
-
+    df['Problem'] = pd.to_numeric(df['Problem'], downcast='integer')
     df.to_csv(outFile, sep=";", encoding='utf-8-sig', index= False)
 
 def ECPrint(allText, i, problems, df):

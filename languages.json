@@ -83,6 +83,11 @@
         "next": {
             "de": "Nächstes?",
             "en": "Next One?"
+        },
+
+        "nextorback": {
+            "de": "[0] Fertig\n[1] Nächstes\n[2] Wiederholen",
+            "en": "[0] Done\n[1] Next\n[2] Redo"
         }
     }
 }
