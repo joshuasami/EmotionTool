@@ -1,16 +1,20 @@
+from re import A
 from functions import *
 from settings import *
 
 import pandas as pd
 pd.options.mode.chained_assignment = None  # default='warn'
 
-def ECMain(allText, lib):
+def ECMain(allText, lib, problems, df):
 
-    df = pd.read_csv(outFile, sep=";")
+    if problems == "" or isinstance(df, str):
 
-    df = df.fillna("")
+        df = pd.read_csv(outFile, sep=";")
 
-    problems, df = checkRows(df, firstIgnore, lib, labels)
+        df = df.fillna("")
+
+        problems, df = checkRows(df, firstIgnore, lib, labels)
+
 
     ECRun(allText, lib, df, problems)
 
@@ -28,61 +32,13 @@ def ECRun(allText, lib, df, problems):
             solved.append(i)
             continue
 
-        print("\n###########\n")
+        eingabe, tmpProblem = ECPrint(allText,i, problems, df)
 
-        for label in labels:
-            print(str(label) + ": " + str(df[label][i]))
-        
-        print("")
 
-        for l in showLabels:
-
-            print(l + ": " + str(df[l][i]))
-
-        print("")
-        if problems[i][1] == 0:
-            print(allText['et']['First-Row-Problem'][language])
-        elif problems[i][1] == 1:
-            print(allText['et']['No-Reduction-Problem'][language])
-        elif problems[i][1] == 2:
-            print(allText['et']['Over-One-Problem'][language])
-        elif problems[i][1] == 3:
-            print(allText['et']['Nothing-Found-Problem'][language])
-
-        print("")
-
-        tmpProblem = []
-        for x in problems[i][0]:
-            tmpProblem.extend(x)
-
-        print(allText['ec']['emotionsfound'][language])
-        for x in tmpProblem:
-            x.printword()
-
-        print("")
-
-        print("[1] - " + allText['general-phrases']['skip'][language])
-
-        print("[2] - " + allText['ec']['own-input'][language])
-
-        print("[3] - " + allText['ec']['99'][language])
-
-        for index in range(4, len(tmpProblem)+ 4):
-            print("[" + str(index) + "] - " + tmpProblem[index-4].emotion)
-
-        print("")
-
-        eingabe = ""
-
-        while eingabe not in [str(z) for z in range(1, len(tmpProblem) + 4)]:
-            eingabe = input(allText['general-phrases']['please-choose'][language] + ": ")
 
         if eingabe == "1":
             
-            checker = ""
-
-            while checker not in ["0", "1"]:
-                checker = input(allText['ec']['next'][language] + " " + allText['general-phrases']['01choice'][language])
+            checker = checker01(allText)
 
             if checker == "0":
                 break
@@ -103,96 +59,26 @@ def ECRun(allText, lib, df, problems):
             
             #### Emotion-Input
 
-            totalChecker = True
-
-            while totalChecker:
-
-                tmpEingabe = input("Emotion: ")
-
-                checker = ""
-
-                while checker not in ["0","1"]:
-                    print(allText['general-phrases']['input'][language] + ": " + tmpEingabe)
-                    checker = input(allText['general-phrases']['correct'][language] + " " + allText['general-phrases']['01choice'][language])
-
-                if checker == "1":
-                    totalChecker = False
-
-            df['Emotion'][i] = tmpEingabe
-
+            tmpEingabe, df = getInput(allText, df, i, 'Emotion')
 
             #### Reduction-Input
 
-            totalChecker = True
-
-            while totalChecker:
-
-                tmpEingabe = input("Reduction: ")
-
-                checker = ""
-
-                while checker not in ["0","1"]:
-                    print(allText['general-phrases']['input'][language] + ": " + tmpEingabe)
-                    checker = input(allText['general-phrases']['correct'][language] + " " + allText['general-phrases']['01choice'][language])
-
-                if checker == "1":
-                    totalChecker = False
-
-            df['Reduction'][i] = tmpEingabe
+            tmpEingabe, df = getInput(allText, df, i, 'Reduction')
             
-
-
             #### Modifier-Input
 
-            totalChecker = True
-
-            while totalChecker:
-
-                tmpEingabe = input("Modifier: ")
-
-                checker = ""
-
-                while checker not in ["0","1"]:
-                    print(allText['general-phrases']['input'][language] + ": " + tmpEingabe)
-                    checker = input(allText['general-phrases']['correct'][language] + " " + allText['general-phrases']['01choice'][language])
-
-                if checker == "1":
-                    totalChecker = False
-
-            df['Modifikator'][i] = tmpEingabe
+            tmpEingabe, df = getInput(allText, df, i, 'Modifikator')
 
             if tmpEingabe != "":
-
-                #tmpSplit = tmpEingabe.split(" ")
-
-                #tmpSplit = list(dict.fromkeys(tmpSplit))
-
-                #for modi in tmpSplit:
                 if tmpEingabe not in lib.modifiers:
                     tmpSplit = tmpEingabe.split(" ")
                     tmpSplit = list(dict.fromkeys(tmpSplit))
                     addSingleWordList(modifikatorUrl, lib.modifiers, tmpEingabe)
                     lib.modifiers.append(tmpSplit)
 
-
             #### Negation-Input
 
-            totalChecker = True
-
-            while totalChecker:
-
-                tmpEingabe = input("Negation: ")
-
-                checker = ""
-
-                while checker not in ["0","1"]:
-                    print(allText['general-phrases']['input'][language] + ": " + tmpEingabe)
-                    checker = input(allText['general-phrases']['correct'][language] + " " + allText['general-phrases']['01choice'][language])
-
-                if checker == "1":
-                    totalChecker = False
-
-            df['Negation'][i] = tmpEingabe
+            tmpEingabe, df = getInput(allText, df, i, 'Negation')
 
             if tmpEingabe != "":
                 if tmpEingabe not in lib.negations:
@@ -232,10 +118,7 @@ def ECRun(allText, lib, df, problems):
             solved.append(i)
 
 
-        checker = ""
-
-        while checker not in ["0", "1"]:
-            checker = input(allText['ec']['next'][language] + " " + allText['general-phrases']['01choice'][language])
+        checker = checker01(allText)
         
         if eingabe == "2":
             rerun = True
@@ -257,3 +140,78 @@ def ECRun(allText, lib, df, problems):
 
 
     df.to_csv(outFile, sep=";", encoding='utf-8-sig', index= False)
+
+
+def ECPrint(allText, i, problems, df):
+
+    print("\n###########\n")
+
+    for label in labels:
+        print(str(label) + ": " + str(df[label][i]))
+    
+    print("")
+
+    for l in showLabels:
+
+        print(l + ": " + str(df[l][i]))
+
+    print("")
+    if problems[i][1] == 0:
+        print(allText['et']['First-Row-Problem'][language])
+    elif problems[i][1] == 1:
+        print(allText['et']['No-Reduction-Problem'][language])
+    elif problems[i][1] == 2:
+        print(allText['et']['Over-One-Problem'][language])
+    elif problems[i][1] == 3:
+        print(allText['et']['Nothing-Found-Problem'][language])
+
+    print("")
+
+    tmpProblem = []
+    for x in problems[i][0]:
+        tmpProblem.extend(x)
+
+    print(allText['ec']['emotionsfound'][language])
+    for x in tmpProblem:
+        x.printword()
+
+    print("")
+
+    print("[1] - " + allText['general-phrases']['skip'][language])
+
+    print("[2] - " + allText['ec']['own-input'][language])
+
+    print("[3] - " + allText['ec']['99'][language])
+
+    for index in range(4, len(tmpProblem)+ 4):
+        print("[" + str(index) + "] - " + tmpProblem[index-4].emotion)
+
+    print("")
+
+    eingabe = ""
+
+    while eingabe not in [str(z) for z in range(1, len(tmpProblem) + 4)]:
+        eingabe = input(allText['general-phrases']['please-choose'][language] + ": ")
+
+    return eingabe, tmpProblem
+
+def getInput(allText, df, i, cat):
+
+    totalChecker = True
+
+    while totalChecker:
+
+        tmpEingabe = input(cat + ": ")
+
+        checker = ""
+
+        while checker not in ["0","1"]:
+            print(allText['general-phrases']['input'][language] + ": " + tmpEingabe)
+            checker = input(allText['general-phrases']['correct'][language] + " " + allText['general-phrases']['01choice'][language])
+
+        if checker == "1":
+            totalChecker = False
+
+    df[cat][i] = tmpEingabe
+
+    return tmpEingabe, df

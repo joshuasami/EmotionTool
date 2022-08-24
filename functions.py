@@ -3,6 +3,7 @@ import re
 import pandas as pd
 import json
 from collections import Counter
+from settings import *
 
 
 class emoword:
@@ -23,12 +24,16 @@ class library:
     self.modifiers = modifiers
     self.negations = negations
 
+class dataframe:
+  def __init__(self, df, problems):
+    self.df = df
+    self.problems = problems
+
 def getText():
     f = open("languages.json", encoding="utf8")
     out = json.load(f)
     f.close()
     return out
-
 
 def checkForEmotions(lib, line):
     doc = str(line).split(" ")
@@ -212,3 +217,10 @@ def checkRows(df, firstIgnore, lib, labels):
 
     return problems, df
 
+def checker01(allText):
+    checker = ""
+
+    while checker not in ["0", "1"]:
+        checker = input(allText['ec']['next'][language] + " " + allText['general-phrases']['01choice'][language])
+
+    return checker

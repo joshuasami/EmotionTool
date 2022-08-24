@@ -39,6 +39,9 @@ checker = ""
 while checker not in ["0", "1"]:
     checker = input(allText['main-menu']['welcome'][language])
 
+if checker == "1":
+    problems, df = "", ""
+
 if checker == "0":
     problems, df = et(allText, lib)
     
@@ -48,4 +51,4 @@ if checker == "0":
         checker = input(allText['et']['continue'][language] + " " + allText['general-phrases']['01choice'][language])
 
 if checker == "1":
-    ECMain(allText, lib)
+    ECMain(allText, lib, problems, df)
