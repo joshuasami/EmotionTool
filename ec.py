@@ -145,7 +145,7 @@ def ECRun(allText, lib, df, problems):
                     problems.pop(solve)
                 except KeyError:
                     pass
-        
+            problems, df = checkRows(df, firstIgnore, lib, labels)
             ECRun(allText, lib, df, problems)
             return 0
 
