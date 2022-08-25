@@ -2,6 +2,7 @@ out/
 in/
 .vscode/
 __pycache__/
+lists/
 .DS_Store
 Archiv/
 Python-Portable-3.9.6/
