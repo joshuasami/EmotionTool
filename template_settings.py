@@ -58,3 +58,14 @@ coder = "BS"
 
 # Spalten, die mit angezeit werden sollen
 showLabels = ["CASE (Interviewnr.)", "vignette"]
+
+
+######## start.cmd ##########
+#
+# python main.py
+# pause
+#
+# Python-Portable-3.9.6\apps\python main.py
+# pause
+#
+#############################
