@@ -113,7 +113,9 @@ def ECRun(allText, lib, df, problems):
             df['Kodierer'][i]  = coder
             solved.append(i)
 
-
+        df['Problem'] = pd.to_numeric(df['Problem'], downcast='integer')
+        df.to_csv(outFile, sep=";", encoding='utf-8-sig', index= False)
+        
         checker = ""
 
         while checker not in ["0", "1", "2"]:
@@ -149,8 +151,7 @@ def ECRun(allText, lib, df, problems):
             ECRun(allText, lib, df, problems)
             return 0
 
-        df['Problem'] = pd.to_numeric(df['Problem'], downcast='integer')
-        df.to_csv(outFile, sep=";", encoding='utf-8-sig', index= False)
+        
 
 def ECPrint(allText, i, problems, df):
 
