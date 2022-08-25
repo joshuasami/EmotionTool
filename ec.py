@@ -88,13 +88,13 @@ def ECRun(allText, lib, df, problems):
 
 
             if df['Emotion'][i] != "":
-                if df['Modifikator'][i] in df['Emotion'][i]:
+                if (df['Modifikator'][i] in df['Emotion'][i]) and (df['Modifikator'][i] != ""):
                     tmpEmo = df['Emotion'][i].replace(df['Modifikator'][i] + " ", "")
                 else:
                     tmpEmo = df['Emotion'][i]
 
-                if df['Negation'][i] in tmpEmo:
-                    tmpEmo = tmpEmo.replace(" ", "").lower()
+                if (df['Negation'][i] in tmpEmo) and (df['Negation'][i] != ""):
+                    tmpEmo = tmpEmo.replace(df['Negation'][i], "nicht").lower()
                 if tmpEmo not in lib.words:
                     addWordList(lib.words, (tmpEmo, df['Reduction'][i]))
                     lib.words[tmpEmo] = df['Reduction'][i]
