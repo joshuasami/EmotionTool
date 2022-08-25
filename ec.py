@@ -149,8 +149,8 @@ def ECRun(allText, lib, df, problems):
             ECRun(allText, lib, df, problems)
             return 0
 
-    df['Problem'] = pd.to_numeric(df['Problem'], downcast='integer')
-    df.to_csv(outFile, sep=";", encoding='utf-8-sig', index= False)
+        df['Problem'] = pd.to_numeric(df['Problem'], downcast='integer')
+        df.to_csv(outFile, sep=";", encoding='utf-8-sig', index= False)
 
 def ECPrint(allText, i, problems, df):
 
