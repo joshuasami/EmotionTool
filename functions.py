@@ -81,7 +81,7 @@ def getSingleWordList(file):
     out = []
 
     with open(file, mode='r', encoding="utf8") as infile:
-        reader = csv.reader(infile)
+        reader = csv.reader(infile, delimiter=seperator)
         out = [row[0].split() for row in reader]
         out.sort(key=len, reverse=True)
 
@@ -90,7 +90,7 @@ def getSingleWordList(file):
 
 def addSingleWordList(file, liste, newWord):
     with open(file, mode='a', newline="", encoding="utf8") as infile:
-        writer = csv.writer(infile)
+        writer = csv.writer(infile, delimiter=seperator)
 
         writer.writerow([newWord])
 
@@ -98,14 +98,14 @@ def getWordList():
     mydict = {}
 
     with open('lists/words.csv', mode='r', encoding="utf8") as infile:
-        reader = csv.reader(infile)
+        reader = csv.reader(infile, delimiter=seperator)
         mydict = {row[0]:row[1] for row in reader if len(row) == 2}
 
     return mydict
 
 def addWordList(dicti, tup):
     with open('lists/words.csv', mode='a', newline="", encoding="utf8") as infile:
-        writer = csv.writer(infile)
+        writer = csv.writer(infile, delimiter=seperator)
 
         out = [str(tup[0]), str(tup[1])]
         writer.writerow(out)
@@ -118,7 +118,7 @@ def counter(liste):
 		print(str(i) + ": " + str(total2.count(int(i))))
 
 def createDf(file):
-    df = pd.read_csv(file, sep=";", encoding='utf-8-sig')
+    df = pd.read_csv(file, sep=seperator, encoding='utf-8-sig')
     # Verständnisfrage;"Frage 1";"Nachfrage 1";"Nachfrage 2";"Nachfrage 3";"Nachfrage 4"
 
     df['Emotion'] = [""] * len(df)

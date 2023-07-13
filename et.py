@@ -7,7 +7,7 @@ def et(allText, lib):
 
     problems, df = checkRows(df, firstIgnore, lib, labels)
 
-    df.to_csv(outFile, index=False, sep=";", encoding='utf-8-sig')
+    df.to_csv(outFile, index=False, sep=seperator, encoding='utf-8-sig')
 
     count_liste = []
     for ind in problems:

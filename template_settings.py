@@ -5,6 +5,7 @@ file = "in/finalTest.csv"
 nonwordsUrl = "lists/nonwords.csv"
 negationsUrl = "lists/negation.csv"
 modifikatorUrl = "lists/modifikator.csv"
+seperator = ";"
 
 # ET = output-File , EC = input/output-File
 outFile = "out/testout.csv"
@@ -58,14 +59,3 @@ coder = "BS"
 
 # Spalten, die mit angezeit werden sollen
 showLabels = ["CASE (Interviewnr.)", "vignette"]
-
-
-######## start.cmd ##########
-#
-# python main.py
-# pause
-#
-# Python-Portable-3.9.6\apps\python main.py
-# pause
-#
-#############################
