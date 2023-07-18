@@ -1,21 +1,25 @@
 from functions import *
 from settings import *
+from io_machine import *
 from et import *
 from ec import *
 
 import pandas as pd
 pd.options.mode.chained_assignment = None  # default='warn'
 
+io = IOMachine(encoding, seperator)
+
+
 # load language file
 try:
-    allText = getJson("languages.json")
+    allText = io.loadJson("languages.json")
 except:
     print("Could not load language file!")
     exit()
 
 # load settings file
 try:
-    settings = getJson("settings.json")
+    settings = io.loadJson("settings.json")
 except:
     print("The settings-file couldn't be open!")
     exit()
