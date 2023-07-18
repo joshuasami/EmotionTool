@@ -29,8 +29,8 @@ class dataframe:
     self.df = df
     self.problems = problems
 
-def getText():
-    f = open("languages.json", encoding="utf8")
+def getJson(file, encoding="utf8"):
+    f = open(file, encoding=encoding)
     out = json.load(f)
     f.close()
     return out

@@ -6,15 +6,53 @@ from ec import *
 import pandas as pd
 pd.options.mode.chained_assignment = None  # default='warn'
 
+# load language file
+try:
+    allText = getJson("languages.json")
+except:
+    print("Could not load language file!")
+    exit()
 
-mydict = getWordList()
-nonwords = getSingleWordList(nonwordsUrl)
-negations = getSingleWordList(negationsUrl)
-modifikator = getSingleWordList(modifikatorUrl)
+# load settings file
+try:
+    settings = getJson("settings.json")
+except:
+    print("The settings-file couldn't be open!")
+    exit()
 
+# load wordlist
+try:
+    mydict = getWordList()
+except:
+    print("The wordlist couldn't be loaded")
+    exit()
+
+# load non-words
+try:
+    nonwords = getSingleWordList(nonwordsUrl)
+except:
+    print("The nonword-wordlist couldn't be loaded")
+    exit()
+
+# load non-words
+try:
+    negations = getSingleWordList(negationsUrl)
+except:
+    print("The negations-wordlist couldn't be loaded")
+    exit()
+
+# load modificator-wordlist
+try:
+    modifikator = getSingleWordList(modifikatorUrl)
+except:
+    print("The modificator-wordlist couldn't be loaded")
+    exit()
+
+
+# create library
 lib = library(mydict, nonwords, modifikator, negations)
 
-allText = getText()
+
 
 print("")
 

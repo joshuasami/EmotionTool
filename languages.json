@@ -89,5 +89,17 @@
             "de": "[0] Fertig\n[1] Nächstes\n[2] Wiederholen",
             "en": "[0] Done\n[1] Next\n[2] Redo"
         }
+    },
+
+    "errors": {
+        "settings_missing": {
+            "de": "Die Settings-Datei konnte nicht geöffnet werden:",
+            "en": "The settings-file couldn't be open"
+        },
+
+        "own-input": {
+            "de": "eigene Eingabe",
+            "en": "new Input"
+        }
     }
 }
