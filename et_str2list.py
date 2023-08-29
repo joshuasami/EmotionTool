@@ -1,7 +1,7 @@
 import re
 
 def str2list(s: str) -> list:
-
+    '''This Method is used to clean strings and return them in a list format.'''
     # removes whitespace at ends
     s = s.strip()
 
