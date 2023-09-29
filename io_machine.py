@@ -92,4 +92,6 @@ class IOMachine:
         
         return file
 
-    
+class Communicator:
+    def __init__(self) -> None:
+        pass 

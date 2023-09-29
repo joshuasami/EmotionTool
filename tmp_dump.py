@@ -10,10 +10,11 @@ class EmotionClicker:
         self.et = et
 
 
-    def check_df(self, df: list = None) -> list:
+    def check_df(self, df: list) -> list:
 
-        if df is None:
-            df = self.df
+        if answer_columns is None:
+            answer_columns = self.answer_columns
+
 
         # 0 = Verständnisfrage
         # 1 = no Reduction

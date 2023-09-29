@@ -13,19 +13,17 @@ def load_single_list(input_structure: dict) -> list:
         for word in row.values():
             out.append(word)
 
-    out = [str2list(x) for x in out]
-
     return out
 
-def load_double_list(input_structure: dict) -> list:
+def load_double_list(input_structure: dict) -> dict:
     '''This function converts the input dict into a list for a single word list'''
     
     out = {}
 
     for row in input_structure.values():
         tmp_words = list(row.values())
-        key = tuple(str2list(tmp_words[0]))
-        out[key] = str2list(tmp_words[0])
+        key = tmp_words[0]
+        out[key] = tmp_words[1]
 
     return out
 

@@ -45,24 +45,22 @@ except:
 et = ET(emotion_dict = emotion_dict, intensifiers = intensifiers, negations = negations)
 
 test_line1 = "ich bin nicht sehr sehr glücklich, aber dann doch eher etwas nicht keine lust"
-test_line1 = str2list(test_line1)
-test_answer1 = [[('keine', 'Lust'), [], [['nicht']]], [('glücklich',), [['sehr'], ['sehr']], [['nicht']]]]
+#test_answer1 = [[('keine', 'Lust'), ['lustlos'], [], [['nicht']]], [('glücklich',), ['glücklich'], [['sehr'], ['sehr']], [['nicht']]]]
+test_answer1 = [['keine Lust', 'lustlos', [], ['nicht']], ['glücklich', 'glücklich', ['sehr', 'sehr'], ['nicht']]]
 
 test_line2 = "mir geht es sehr gut"
-test_line2 = str2list(test_line2)
-test_answer2 = [[('gut',), [['sehr']], []]]
+test_answer2 = [['gut', 'positiv', ['sehr'], []]]
 
 test_line3 =  "fröhlich"
-test_line3 = str2list(test_line3)
-test_answer3 = [[("fröhlich",),[],[]]]
+test_answer3 = [["fröhlich", 'fröhlich', [],[]]]
 
 test_line4 = ""
-test_line4 = str2list(test_line4)
-test_answer4 = [[[],[],[]]]
+test_answer4 = [["","",[],[]]]
 
 def test_multiple_assert_statements():
-    assert et.check_line(test_line1) == test_answer1
-    assert et.check_line(test_line2) == test_answer2
-    assert et.check_line(test_line3) == test_answer3
-    assert et.check_line(test_line4) == test_answer4
+    assert et.check_for_emotion(test_line1) == test_answer1
+    assert et.check_for_emotion(test_line2) == test_answer2
+    assert et.check_for_emotion(test_line3) == test_answer3
+    assert et.check_for_emotion(test_line4) == test_answer4
+
 

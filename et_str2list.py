@@ -11,6 +11,8 @@ def str2list(s: str) -> list:
     # only keep letter, numbers and spaces
     s = re.sub("[^\w\d\s]","",s)
 
+    s = s.lower()
+
     # splits string into list of words, based on whitespaces
     out = s.split()
 
