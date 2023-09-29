@@ -1,60 +1,57 @@
 from functions import *
 from settings import *
 from io_machine import *
+from et_io_conversion import *
 from et import *
 from ec import *
 
-import pandas as pd
-pd.options.mode.chained_assignment = None  # default='warn'
 
+# creating the IOMachine instance
 io = IOMachine(encoding, seperator)
 
 
-# load language file
+# loading language file
 try:
-    allText = io.loadJson("languages.json")
+    allText = io.load_file("languages.json")
 except:
     print("Could not load language file!")
     exit()
 
-# load settings file
+# loading wordlist
 try:
-    settings = io.loadJson("settings.json")
-except:
-    print("The settings-file couldn't be open!")
-    exit()
-
-# load wordlist
-try:
-    mydict = getWordList()
+    emotion_dict_raw = io.load_file(emotionwords_url)
+    emotion_dict = load_double_list(emotion_dict_raw)
 except:
     print("The wordlist couldn't be loaded")
     exit()
 
-# load non-words
+# loading negation-wordlist
 try:
-    nonwords = getSingleWordList(nonwordsUrl)
-except:
-    print("The nonword-wordlist couldn't be loaded")
-    exit()
-
-# load non-words
-try:
-    negations = getSingleWordList(negationsUrl)
+    negations_raw = io.load_file(negations_url)
+    negations = load_single_list(negations_raw)
 except:
     print("The negations-wordlist couldn't be loaded")
     exit()
 
-# load modificator-wordlist
+# loading modificator-wordlist
 try:
-    modifikator = getSingleWordList(modifikatorUrl)
+    intensifiers_raw = io.load_file(modificator_url)
+    intensifiers = load_single_list(intensifiers_raw)
 except:
     print("The modificator-wordlist couldn't be loaded")
     exit()
 
+# creating ET
+et = ET(emotion_dict = emotion_dict, intensifiers = intensifiers, negations = negations)
 
-# create library
-lib = library(mydict, nonwords, modifikator, negations)
+# loading input-file
+try:
+    input_file_raw = io.load_file(input_file_url)
+    df = load_df(input_file_raw)
+except:
+    print("The input-file couldn't be loaded")
+
+
 
 
 
@@ -69,7 +66,7 @@ logo = """
  | |___| | | | | | (_) | |_| | (_) | | | | | (_) | (_) | |
  |_____|_| |_| |_|\___/ \__|_|\___/|_| |_|_|\___/ \___/|_|
 
-                                    © Joshua Sami Bräuer  
+                                    © Bräuer & Streubel  
 
 ############################################################
 """
