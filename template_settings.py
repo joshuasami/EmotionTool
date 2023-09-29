@@ -29,7 +29,7 @@ coder = "JSB"
 showLabels = ["vignette", "Bemerkung", "gender"]
 
 
-#für Erwachsene folgendes in Settings ändern:
+****für Erwachsene folgendes in Settings ändern:
 
 # input-File
 file = "in/finalTest.csv"
