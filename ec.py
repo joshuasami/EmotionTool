@@ -2,10 +2,11 @@ from re import A
 from functions import *
 from settings import *
 from et import ET
+from et_structure import EmotionLine
 
 
 class EmotionClicker:
-    def __init__(self, df: list = None, et: ET = None) -> None:
+    def __init__(self, df: list, et: ET = None) -> None:
         self.df = df
         self.et = et
 
@@ -26,12 +27,14 @@ class EmotionClicker:
             if line.matches is not None:
                 continue
 
-            counter = 0
+            
+            # checking all col
             out = []
-
             for key, col in line.anwers.items():
-                out.append({key:self.check_line(col)})
-
+                out.append({key:self.et.check_line(col)})
+            
+            
+            counter = 0
             for y in out:
                 counter += len(y)
 
@@ -86,7 +89,9 @@ class EmotionClicker:
 
         return problems, df
 
-
+    def check_line(self, line: str) -> list:
+        if self.et is not None:
+            for 
 
 
 

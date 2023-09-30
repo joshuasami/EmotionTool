@@ -42,7 +42,7 @@ except:
     quit()
 
 # creating ET
-et = ET(emotion_dict = emotion_dict, intensifiers = intensifiers, negations = negations)
+et = ET(emotion_dict = emotion_dict, intensifiers = intensifiers, negations = negations, labels_raising_problem=labels_raising_problem)
 
 test_line1 = "ich bin nicht sehr sehr glücklich, aber dann doch eher etwas nicht keine lust"
 #test_answer1 = [[('keine', 'Lust'), ['lustlos'], [], [['nicht']]], [('glücklich',), ['glücklich'], [['sehr'], ['sehr']], [['nicht']]]]
@@ -62,5 +62,17 @@ def test_multiple_assert_statements():
     assert et.check_for_emotion(test_line2) == test_answer2
     assert et.check_for_emotion(test_line3) == test_answer3
     assert et.check_for_emotion(test_line4) == test_answer4
+
+
+tmp = load_df(io.load_file("in/et_in_file.csv"))
+i = 0
+for i in range(1):
+    tmp_line = et.check_line(tmp[i])
+    print(tmp_line.answers)
+    print(tmp_line.other_columns)
+    print(tmp_line.matches)
+    print(tmp_line.raised_problems)
+
+
 
 
