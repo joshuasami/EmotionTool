@@ -16,7 +16,8 @@ class IOMachine:
     def load_file(self, file: str, filetype: str = None, encoding: str = None, delimiter: str = None) -> dict:
         '''General Method to call, if you want to open a file.
         The Function will call any needed functions for different file-formats.'''
-         # if no encoding was given as a parameter, the encoding is set to the class variable
+        
+        # if no encoding was given as a parameter, the encoding is set to the class variable
         if encoding is None:
             encoding = self.encoding
         
@@ -72,7 +73,7 @@ class IOMachine:
 
         return out
     
-    def save_file(self, file: str, output, encoding: str = None, delimiter: str = None):
+    def save_file(self, file: str, output, encoding: str = None, delimiter: str = None) -> None:
         '''General Method to call, if you want to save a file.
         The Function will call any needed functions for different file-formats.'''
          # if no encoding was given as a parameter, the encoding is set to the class variable
@@ -90,7 +91,8 @@ class IOMachine:
             f.write(output)
 
         
-        return file
+        with open(file) as f:
+            f.write(output)
 
 class Communicator:
     def __init__(self) -> None:

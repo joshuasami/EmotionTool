@@ -4,6 +4,7 @@ from et_str2list import str2list
 
 class ET:
     '''ET can, equipt with an emotion, modifier and reduction list, analyze sentences for emotion terms '''
+    
     def __init__(self, emotion_dict: dict, intensifiers: list, negations: list, answer_columns: list = None, labels_raising_problem: list = None) -> None:
         self.emotion_dict = emotion_dict
         self.intensifiers = intensifiers
@@ -16,62 +17,74 @@ class ET:
         if labels_raising_problem is None:
             labels_raising_problem = []
         self.labels_raising_problem = labels_raising_problem
-
-    def check_line(self, line: EmotionLine) -> EmotionLine:
-
-        # 0 = Verständnisfrage
-        # 1 = no Reduction
-        # 2 = over 2
-        # 3 = 0
         
-        if line.matches != []:
-            return line
+
+    def check_line(self, line: EmotionLine, labels_raising_problem: list = None) -> EmotionLine:
+
+        # explanation of raised problem-codes
+        # 0 = match in marked column
+        # 1 = no reduction
+        # 2 = over 1
+        # 3 = 0 matches
+
+        if labels_raising_problem is None:
+            labels_raising_problem = self.labels_raising_problem
         
         for key, col in line.answers.items():
             tmp_checked = self.check_for_emotion(col)
             if tmp_checked != []:
-                line.matches.append({key:tmp_checked})
+                if key in line.matches:
+                    line.matches[key].extend(tmp_checked)
+                else:
+                    line.matches[key] = tmp_checked
 
         counter = 0
-        for col in line.matches:
-            counter += len(col)
+        for value in line.matches.values():
+            counter += len(value)
 
+        # append error-code 3, if there were no matches found
         if counter == 0:
             line.raised_problems.append(3)
             return line
         
+        # append error code 2, if there was more than one match found
         elif counter > 1:
             line.raised_problems.append(2)
         
         no_reduction = False
         label_raising_problem = False
-        for columns in line.matches:
-            for col, matches in columns.items():
-                if col in self.labels_raising_problem:
-                    label_raising_problem = True
-                
-                for match in matches:
-                    if match[2] == "":
-                        no_reduction = True             
+        #for columns in line.matches:
+        for col, matches in line.matches.items():
+            if col in labels_raising_problem:
+                label_raising_problem = True
+            
+            for match in matches:
+                if match['reduction'] == "":
+                    no_reduction = True             
 
+        # append error code 1, if there was a match with no reduction
         if no_reduction:
             line.raised_problems.append(1)
 
+        # append error code 0, if there was a match in a column, which was marked to raise errors
         if label_raising_problem:
             line.raised_problems.append(0)
 
+        # if there are no problems and one found match, then the emotion word is set
+        if len(line.raised_problems) == 0 and counter == 1:
+            line.emotion_word = line.matches.values()[0][0]
+
+
+        # setting the last person coding to ET
+        line.coder = "ET"
+
         return line
 
-
-
-        
-
-
-
-    def check_for_emotion(self, line: str) -> list:
+    def check_for_emotion(self, line: str) -> dict:
         '''This function is the main method of ET
         if presented with a sentence in string format, it analyzes it for used emotions and its connected intensifiers and negations'''
         
+
         line = str2list(line)
         
         # exits, if the line is empty
@@ -185,6 +198,13 @@ class ET:
 
             found_negation = matches_tmp
             
-            out.append([found_emotion,found_reduction, found_intensifier,found_negation])
+            out.append(
+                {'emotion':found_emotion,
+                 'reduction':found_reduction,
+                 'intensifier':' '.join(found_intensifier),
+                 'negation':' '.join(found_negation)
+                 })
         
         return out
+    
+    

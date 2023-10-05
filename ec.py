@@ -11,88 +11,169 @@ class EmotionClicker:
         self.et = et
 
 
-    def check_df(self, df: list = None) -> list:
+    def check_df(self, automatic_labeling: bool, et: ET = None, df: list = None) -> None:
 
         if df is None:
             df = self.df
+        
+        if et is None:
+            et = self.et
 
-        # 0 = Verständnisfrage
-        # 1 = no Reduction
-        # 2 = over 2
-        # 3 = 0
-        problems = {}
-        check = []
-        for i,line in enumerate(df):
+        if automatic_labeling:
+            if self.et is None:
+                print("There is no instance of ET or another labelling machine loaded")
+                exit_programm()
+            
+            for i, line in enumerate(self.df):
+                self.df[i] = et.check_line(line)
+        
+        else:
+            for i, line in enumerate(df):
+                
+                if line.matches == [] or line.raised_problems != []:
+                    self.df[i] = self.check_line(line)
+                
+                if not continue_labeling:
+                    break
 
-            if line.matches is not None:
+            
+
+
+    def check_line(self, line: EmotionLine) -> EmotionLine:
+
+        self.print_line(line=line)
+
+        eingabe = self.get_ec_decision(line)
+
+        line = self.change_line(line=line, eingabe=eingabe)
+
+        if len(line.emotion_word) > 0:
+            
+            stripped_emotion_word = line.emotion_word['emotion'].replace(line.emotion_word['intensifier'], "")
+            stripped_emotion_word = stripped_emotion_word.replace(line.emotion_word['negation'], "")
+            stripped_emotion_word = stripped_emotion_word.strip()
+
+            if len(line.emotion_word['intensifier']) > 0 and line.emotion_word['intensifier'] not in self.et.intensifiers:
+                self.et.intensifiers.append(line.emotion_word['intensifier'])
+            
+            if len(line.emotion_word['negation']) > 0 and line.emotion_word['negation'] not in self.et.negations:
+                self.et.negations.append(line.emotion_word['negation'])
+            
+            if len(line.emotion_word['negation']) > 0 and f"nicht {stripped_emotion_word}" not in self.et.emotion_dict:
+                self.et.emotion_dict[f"nicht {stripped_emotion_word}"] = line.emotion_word['reduction']
+
+            elif len(line.emotion_word['negation']) == 0 and line.emotion_word['emotion'] not in self.et.emotion_dict:
+                self.et.emotion_dict[stripped_emotion_word] = line.emotion_word['reduction']
+
+        return line
+
+
+    def print_line(self, line: EmotionLine, showLabels: list = None) -> None:
+
+        print("\n###########\n")
+
+        for label,value in line.answers.items():
+
+            print(str(label) + ": " + str(value))
+        
+        print("")
+
+        for l in showLabels:
+            try:
+                print(l + ": " + str(line.other_columns[l]))
+            except:
                 continue
 
-            
-            # checking all col
-            out = []
-            for key, col in line.anwers.items():
-                out.append({key:self.et.check_line(col)})
-            
-            
-            counter = 0
-            for y in out:
-                counter += len(y)
+        print("")
+        
+        print(f"Problems found: {', '.join([str(p) for p in line.raised_problems])}")
+        
+        print("")
 
-            if counter == 1:            
-                if self.first_ignore:
-                    if out[0] != []:
-                        problems[i] = [out, 0]
-                        continue
-                
-                for i in out:
-                    if i != []:
-                        df['Emotion'][ind] = i[0].emotion
-                        df['Reduction'][ind] = i[0].reduction
-                        df['Modifikator'][ind] = i[0].modifier
-                        df['Negation'][ind]  = i[0].negation
-                        df['Kodierer'][ind]  = "E.T."
-                        df['Problem'][ind]  = ""
-                if df['Reduction'][ind] == "":
-                    problems[ind] = [out, 1]
+        for col, matches in line.matches:
+            print(f"Column: {col}")
+            for match in matches:
+                print(f"Emotion: {match['emotion']}, Reduction: {match['reduction']}, Intensifier: {match['intensifier']}, Negation: {match['negation']}")
             
-            elif counter > 1:
-                emos = []
-                for z in range(len(out)):
-                    for i in out[z]:
-                        if i != []:
-                            emos.append(i.emotion)
-                            #for y in out:
-                            #    if y != []:
-                            #        if i.emotion != y.emotion:
-                            #            sameEmo = False
-                            
-                if len(Counter(emos).values()) == 1:
-                    for i in out:
-                        if i != []:
-                            df['Emotion'][ind] = i[0].emotion
-                            df['Reduction'][ind] = i[0].reduction
-                            df['Modifikator'][ind] = i[0].modifier
-                            df['Negation'][ind]  = i[0].negation
-                            df['Kodierer'][ind]  = "E.T."
-                            df['Problem'][ind]  = ""
-                else:
-                    problems[ind] = [out, 2]
-            else:
-                problems[ind] = [out, 3]
+            print("")
+        
+    def get_ec_decision(line: EmotionLine) -> str:
+        print("")
 
-            check.append(counter)
+        print("[1] - skip")
 
-        for ind in problems:
-            df['Problem'][ind] = problems[ind][1]
+        print("[2] - own input")
 
+        print("[3] - 99")
+
+        matches_as_list = [item for sublist in line.matches.values() for item in sublist]
+
+        for index in range(4, len(matches_as_list)+ 4):
+            print("[" + str(index) + "] - " + matches_as_list[index-4]['emotion'])
+
+        checker = ""
+        checker_options = [str(x) for x in list(range(1, len(matches_as_list) + 4))]
+        while checker not in checker_options:
+            checker = input("Please choose: ")
+
+        return checker
+
+    def change_line(self, line: EmotionLine, eingabe: int) -> EmotionLine:
         
 
-        return problems, df
 
-    def check_line(self, line: str) -> list:
-        if self.et is not None:
-            for 
+        if eingabe == "3":
 
+            line.emotion_word['emotion'] = '99'
+            line.emotion_word['reduction'] = '99'
+            line.emotion_word['intensifier'] = ''
+            line.emotion_word['negation'] = ''
+
+        elif eingabe == "2":
+            
+            # Emotion-Input
+            line.emotion_word['emotion'] = self.get_input('Emotion')
+            
+            # Reduction-Input
+            line.emotion_word['reduction'] = self.get_input('Reduction')
+
+            # Intensifier-Input
+            line.emotion_word['intensifier'] = self.get_input('Intensifier')
+
+            # Negation-Input
+            line.emotion_word['negation'] = self.get_input('Negation')
+            
+
+        else:
+            matches_as_list = [item for sublist in line.matches.values() for item in sublist]
+            line.emotion_word['emotion'] = matches_as_list[eingabe-4]['emotion']
+            line.emotion_word['reduction'] = matches_as_list[eingabe-4]['reduction']
+            line.emotion_word['intensifier'] = matches_as_list[eingabe-4]['intensifier']
+            line.emotion_word['negation'] = matches_as_list[eingabe-4]['negation']
+        
+        line.coder = coder
+
+        return line
+
+    def get_input(cat_displayed: str) -> str:
+
+        total_checker = True
+
+        while total_checker:
+
+            user_input = input(cat_displayed + ": ")
+
+            checker = ""
+
+            while checker not in ["0","1"]:
+                print("Your Input" + ": " + user_input)
+                checker = input('Is this correct?' + ' ' + '(0 = No, 1 = Yes)')
+
+            if checker == "1":
+                total_checker = False
+
+
+        return user_input
 
 
 def ECMain(allText, lib, problems, df):

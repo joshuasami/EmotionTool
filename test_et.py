@@ -64,7 +64,7 @@ def test_multiple_assert_statements():
     assert et.check_for_emotion(test_line4) == test_answer4
 
 
-tmp = load_df(io.load_file("in/et_in_file.csv"))
+tmp = load_df(io.load_file("in/et_in_file.csv"), labels_to_look_through)
 i = 0
 for i in range(1):
     tmp_line = et.check_line(tmp[i])
