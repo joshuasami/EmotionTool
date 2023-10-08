@@ -1,6 +1,5 @@
 import re
 from et_structure import EmotionLine
-from et_str2list import str2list
 
 class ET:
     '''ET can, equipt with an emotion, modifier and reduction list, analyze sentences for emotion terms '''
@@ -44,12 +43,14 @@ class ET:
 
         # append error-code 3, if there were no matches found
         if counter == 0:
-            line.raised_problems.append(3)
+            if 3 not in line.raised_problems:
+                line.raised_problems.append(3)
             return line
         
         # append error code 2, if there was more than one match found
         elif counter > 1:
-            line.raised_problems.append(2)
+            if 2 not in line.raised_problems:
+                line.raised_problems.append(2)
         
         no_reduction = False
         label_raising_problem = False
@@ -63,29 +64,31 @@ class ET:
                     no_reduction = True             
 
         # append error code 1, if there was a match with no reduction
-        if no_reduction:
+        if no_reduction and 1 not in line.raised_problems:
             line.raised_problems.append(1)
 
         # append error code 0, if there was a match in a column, which was marked to raise errors
-        if label_raising_problem:
+        if label_raising_problem and 0 not in line.raised_problems:
             line.raised_problems.append(0)
 
         # if there are no problems and one found match, then the emotion word is set
         if len(line.raised_problems) == 0 and counter == 1:
-            line.emotion_word = line.matches.values()[0][0]
+            line.emotion_word = list(line.matches.values())[0][0]
+            
+            # setting the last person coding to ET
+            line.coder = "ET"
 
 
-        # setting the last person coding to ET
-        line.coder = "ET"
+
 
         return line
 
-    def check_for_emotion(self, line: str) -> dict:
+    def check_for_emotion(self, line: str) -> list:
         '''This function is the main method of ET
         if presented with a sentence in string format, it analyzes it for used emotions and its connected intensifiers and negations'''
         
 
-        line = str2list(line)
+        line = self.str2list(line)
         
         # exits, if the line is empty
         if not line:
@@ -101,7 +104,7 @@ class ET:
             # the key is here, that we start at the end of the line
             matches = {}
             for emotion in self.emotion_dict.keys():
-                split_emotion = str2list(emotion)
+                split_emotion = self.str2list(emotion)
                 try:
                     if line[-len(split_emotion):len(line)] == split_emotion:
                         matches[emotion] = split_emotion
@@ -142,7 +145,7 @@ class ET:
                 matches = {}
 
                 for intensifier in self.intensifiers:
-                    split_intensifier = str2list(intensifier)
+                    split_intensifier = self.str2list(intensifier)
                     try:
                         if line[-len(split_intensifier):len(line)] == split_intensifier:
                             matches[intensifier] = split_intensifier
@@ -174,7 +177,7 @@ class ET:
                 matches = {}
 
                 for negation in self.negations:
-                    split_negation = str2list(negation)
+                    split_negation = self.str2list(negation)
                     try:
                         if line[-len(split_negation):len(line)] == split_negation:
                             matches[negation] = split_negation
@@ -207,4 +210,23 @@ class ET:
         
         return out
     
-    
+    def str2list(self,s: str) -> list:
+        '''This Method is used to clean strings and return them in a list format.'''
+        
+        # removes whitespace at ends
+        s = s.strip()
+
+        # reduces multiple whitespaces to one
+        s = re.sub(" +", " ", s)
+
+        # only keep letter, numbers and spaces
+        s = re.sub("[^\\w\\d\\s]","",s)
+
+        # this puts all letters into lowercase
+        s = s.lower()
+
+        # splits string into list of words, based on whitespaces
+        out = s.split()
+
+        # returns list of words
+        return out

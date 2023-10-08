@@ -7,7 +7,7 @@ encoding = "utf8"
 # Listen
 emotionwords_url = "lists/words.csv"
 negations_url = "lists/negation.csv"
-modificator_url = "lists/modifikator.csv"
+intensifier_url = "lists/modifikator.csv"
 seperator = ";"
 
 # ET = output-File , EC = input/output-File
