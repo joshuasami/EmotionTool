@@ -3,9 +3,8 @@
 import csv
 import json
 import re
-import sys
-from time import gmtime, strftime
-from functions import *
+from functions import exit_programm
+
 
 class IOMachine:
     '''Class to load and save files'''

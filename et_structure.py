@@ -19,15 +19,6 @@ class EmotionLine:
             emotion_word = {}
         self.emotion_word = emotion_word
 
-        """ if et_columns is None:
-            et_columns = {"emotion":"", 
-                          "reduction":"",
-                          "intensifier":"",
-                          "negation":"",
-                          "problems": "",
-                          "coder": ""}
-            
-        self.et_columns = et_columns """
         
         if raised_problems is None:
             raised_problems = []
@@ -38,14 +29,4 @@ class EmotionLine:
         self.matches = matches
 
         self.coder = coder
-    
-    def get_answers(self) -> dict:
-        '''Function that returns the answers'''
-
-        return self.answers
-
-    def get_other_columns(self) -> dict:
-        '''Function that returns the other columns'''
-
-        return self.other_columns
-
+        

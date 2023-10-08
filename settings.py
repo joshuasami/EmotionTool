@@ -1,50 +1,51 @@
-# input-File
-input_file_url = "in/et_in_file.csv"
+'''This file contains all settings for the program.'''
+# Please look through all possible settings once. Their might be somithing for you to change for the programm to work correctly.
+# IMPORT: Don't save the words, which are written in capital-letters. These are variable-names and changing them will result in an error and break the program!
 
-# encoding
-encoding = "utf8"
+# Filepath of the input-file
+INPUT_FILE_URL = "in/et_in_file.csv"
 
-# Listen
-emotionwords_url = "lists/words.csv"
-negations_url = "lists/negation.csv"
-intensifier_url = "lists/modifikator.csv"
-seperator = ";"
+# Filepath of the Emotion-Dictinary
+EMOTION_WORDS_URL = "lists/words.csv"
 
-# ET = output-File , EC = input/output-File
-outFile = "out/ETout_KEeKS_LS_EFB_09062023_605-647.csv"
+# Filepath of the negation-wordlist
+NEGATIONS_URL = "lists/negation.csv"
 
-# Spalten, die in der Auswertung untersucht werden
-labels_to_look_through = ['Verständnisfrage', 'Frage 1', 'Nachfrage 1', 'Nachfrage 2', 'Nachfrage 3', 'Nachfrage 4']
-labels_raising_problem = ['Verständnisfrage']
+# Filepath of the intensifier-wordlist
+INTENSIFIER_URL = "lists/modifikator.csv"
 
+# Filepath of the output-file
+OUTPUT_FILE = "out/ETout_KEeKS_LS_EFB_09062023_605-647.csv"
 
-et_labels = {"emotion":"Emotion", 
+# Columns which are to be searched for emotions by ET
+LABELS_TO_LOOK_THROUGH = ['Verständnisfrage',
+                          'Frage 1', 
+                          'Nachfrage 1', 
+                          'Nachfrage 2', 
+                          'Nachfrage 3', 
+                          'Nachfrage 4']
+
+# Columns which raise an error, if a match is found in them
+LABELS_RAISING_PROBLEMS = ['Verständnisfrage']
+
+# column-names, which should be shown next to the default columns, when "clicking through the lines".
+LABELS_TO_SHOW = ["vignette"]
+
+# Name of the coder, which is noted in the output-file
+CODER = "JSB"
+
+# Column-names for the ET specific columns. 
+# This is a dictionary format (key:value). The key (e.g. "emotion") is the name of the column inside the program. The value (e.g. "Emotion") is the name of the column in your input.file.
+# IMPORTANT!!!: Don't change the keys (e.g. "emotion")! Only change the values (e.g. "Emotion")! Changing the keys will result in an error and break the program!
+ET_LABELS = {"emotion":"Emotion", 
              "reduction":"Reduction", 
              "intensifier":"Intensifier", 
              "negation":"Negation", 
              "problems": "Problems", 
              "coder": "Coder"}
 
+# Encoding of al the input-files
+ENCODING = "utf8"
 
-#labels = ['Nennung 1']
-#labels = ['Emotionswort']
-
-
-# Fragt bei True bei Funden in der ersten Spalte immer nach. Wenn nicht gewünscht --> False
-#firstIgnore = True
-firstIgnore = True
-
-# Optionen: "de" und "en"
-language = "de"
-
-
-
-#### E.C. ####
-
-# Kodierer
-coder = "JSB"
-
-# Spalten, die mit angezeit werden sollen
-#showLabels = ["ID subject", "vignette", "Bemerkung"]
-#showLabels = ["ID_bl", "vignette", "Nennung 1", "Nennung 2", "Nennung 3", "Nennung 4", "Nennung 5"]
-showLabels = ["CASE", "vignette"]
+# Seperator for the csv-files
+SEPERATOR = ";"

@@ -1,11 +1,9 @@
 '''This modul converts data loaded with the IOMachine into a format suitable for ET'''
 
-from et_structure import *
-
+from et_structure import EmotionLine
 
 def load_single_list(input_list: list[dict]) -> list:
-    '''This function converts the input dict into a list for a single word list'''
-    
+    '''This function converts the input dict into a list for a single word list'''    
     out = []
     for row in input_list:
         for word in row.values():
@@ -54,11 +52,16 @@ def load_df(input_list: list[dict], labels_to_look_through: list, et_labels: dic
             else:
                 other_columns[key] = value
 
-        out.append(EmotionLine(answers=answers, other_columns=other_columns, emotion_word=emotion_word, coder=coder,raised_problems=raised_problems))
+        out.append(EmotionLine(answers=answers, 
+                               other_columns=other_columns, 
+                               emotion_word=emotion_word, 
+                               coder=coder,
+                               raised_problems=raised_problems))
 
     return out
 
 def convert_single_list(input_list: list, name: str) -> list[dict]:
+    '''This function converts a single list into a list of dicts. Every entry gets the same key, which is given by the name parameter'''
 
     out = []
 
@@ -70,6 +73,7 @@ def convert_single_list(input_list: list, name: str) -> list[dict]:
     return out
 
 def convert_double_list(input_dict: dict, row_1: str, row_2: str) -> list[dict]:
+    '''This function converts a double list into a list of dicts. Every entry gets the same two keys, which are given by the row_1 and row_2 parameter'''
 
     out = []
 
@@ -82,9 +86,11 @@ def convert_double_list(input_dict: dict, row_1: str, row_2: str) -> list[dict]:
     return out
 
 def convert_df(df: list[EmotionLine], et_labels: dict = None) -> list[dict]:
+    '''This function converts the df into a list of dicts
+    The et_labels parameter is a dict, which contains the labels for the et columns'''
 
     out = []
-    
+
     for line in df:
         tmp_out = {}
 

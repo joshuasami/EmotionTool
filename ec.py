@@ -1,6 +1,7 @@
-from re import A
-from functions import *
-from settings import *
+'''This is the Main Class, kind of like the controll center of the program. It is used to label the data with the help of ET'''
+
+from functions import exit_programm
+#from settings import *
 from et import ET
 from et_structure import EmotionLine
 
@@ -8,9 +9,14 @@ from et_structure import EmotionLine
 class EmotionClicker:
     '''This class is used to label the data with the help of ET'''
 
-    def __init__(self, df: list, et: ET = None) -> None:
+    def __init__(self, df: list, et: ET = None, coder: str = "", labels_to_show: list[str] = None) -> None:
         self.df = df
         self.et = et
+        if labels_to_show is None:
+            labels_to_show = []
+        self.labels_to_show = labels_to_show
+
+        self.coder = coder
 
 
     def check_df(self, automatic_labeling: bool, et: ET = None, df: list = None) -> None:
@@ -24,7 +30,7 @@ class EmotionClicker:
         if et is None:
             et = self.et
 
-        
+        # if automatic labeling is true, use the et to label the data
         if automatic_labeling:
             if self.et is None:
                 print("There is no instance of ET or another labelling machine loaded")
@@ -33,15 +39,24 @@ class EmotionClicker:
             for i, line in enumerate(self.df):
                 self.df[i] = et.check_line(line)
         
+        # if automatic labeling is false, use the self.check_line function to label the data.
+        # This means that the user can label the data manually
         else:
+            
+            # the continue_labeling variable is used to determine if the user wants to continue labeling
             continue_labeling = True
             while continue_labeling:
                 for i, line in enumerate(df):
+
+                    # the rerun variable is used to determine if the user wants to redo the labeling of a line
                     rerun = True
-                    while rerun:    
+                    while rerun:
+
+                        # if there is no emotion word in the line, label it    
                         if line.emotion_word['emotion'] == "":
                             tmp_line = self.check_line(line)
 
+                            # the checker variable is used to determine if the user wants to continue labeling or redo the labeling of the line
                             checker = ""
                             while checker not in ["0", "1", "2"]:
                                 checker = input("[0] Done\n[1] Next\n[2] Redo")
@@ -54,8 +69,10 @@ class EmotionClicker:
                             if checker in ["1", "0"]:
                                 rerun = False
 
+                                # if the line was labeled, we have to check if the emotion word, intensifier, or negatation are already in the et, if not, we add them
                                 if len(tmp_line.emotion_word) > 0:
                                     
+                                    # we strip the emotion word from the intensifier and negation
                                     stripped_emotion_word = tmp_line.emotion_word['emotion'].replace(tmp_line.emotion_word['intensifier'], "")
                                     stripped_emotion_word = stripped_emotion_word.replace(tmp_line.emotion_word['negation'], "")
                                     stripped_emotion_word = stripped_emotion_word.strip()
@@ -97,36 +114,42 @@ class EmotionClicker:
         return line
 
 
-    def print_line(self, line: EmotionLine, showLabels: list = None) -> None:
+    def print_line(self, line: EmotionLine, labels_to_show: list[str] = None) -> None:
         '''This function prints the line in a readable way'''
 
-        if showLabels is None:
-            showLabels = []
+        if labels_to_show is None:
+            labels_to_show = self.labels_to_show
+        
         print("\n###########\n")
 
+        # prints all line, which possibly could contain an emotion word
         for label,value in line.answers.items():
 
             print(str(label) + ": " + str(value))
         
         print("")
 
-        for l in showLabels:
+        # prints all labels, which are in the labels_to_show list
+        # if the label is not in the line, it will be skipped
+        for l in labels_to_show:
             try:
                 print(l + ": " + str(line.other_columns[l]))
-            except:
+            except KeyError:
                 continue
 
         print("")
         
+        # prints all problems, which were found in the line
         print(f"Problems found: {', '.join([str(p) for p in line.raised_problems])}")
-        
+
         print("")
 
+        # prints all matches, which were found in the line
         for col, matches in line.matches.items():
             print(f"Column: {col}")
             for match in matches:
                 print(f"Emotion: {match['emotion']}, Reduction: {match['reduction']}, Intensifier: {match['intensifier']}, Negation: {match['negation']}")
-            
+
             print("")
         
     def get_ec_decision(self, line: EmotionLine) -> str:
@@ -140,11 +163,14 @@ class EmotionClicker:
 
         print("[3] - 99")
 
+        # creates a list of all matches
         matches_as_list = [item for sublist in line.matches.values() for item in sublist]
 
+        # prints all matches, which were found in the line. We add 4 to the index, because the first 3 options are already taken
         for index in range(4, len(matches_as_list)+ 4):
             print("[" + str(index) + "] - " + matches_as_list[index-4]['emotion'])
 
+        # the checker variable is used to determine if the user input is valid
         checker = ""
         checker_options = [str(x) for x in list(range(1, len(matches_as_list) + 4))]
         while checker not in checker_options:
@@ -156,6 +182,7 @@ class EmotionClicker:
         '''This function changes the line according to the input'''
 
 
+        # if the input is 3, we set the emotion word to 99 (no emotion word found)
         if eingabe == 3:
 
             line.emotion_word['emotion'] = '99'
@@ -163,9 +190,11 @@ class EmotionClicker:
             line.emotion_word['intensifier'] = ''
             line.emotion_word['negation'] = ''
 
+        # if the input is 1, we return the line without changing it
         elif eingabe == 1:
             return line
         
+        # if the input is 2, we ask the user for an input
         elif eingabe == 2:
             
             # Emotion-Input
@@ -180,7 +209,7 @@ class EmotionClicker:
             # Negation-Input
             line.emotion_word['negation'] = self.get_input('Negation')
             
-
+        # if the input is greater than 3, we set the emotion word to the chosen-input
         else:
             matches_as_list = [item for sublist in line.matches.values() for item in sublist]
             line.emotion_word['emotion'] = matches_as_list[eingabe-4]['emotion']
@@ -188,28 +217,22 @@ class EmotionClicker:
             line.emotion_word['intensifier'] = matches_as_list[eingabe-4]['intensifier']
             line.emotion_word['negation'] = matches_as_list[eingabe-4]['negation']
         
-        line.coder = coder
+        # setting the coder to the coder from the class 
+        line.coder = self.coder
 
         return line
 
     def get_input(self, cat_displayed: str) -> str:
         '''This function asks the user for an input to a given category'''
 
-        total_checker = True
+        # the checker variable is used to determine if the user input is valid
+        checker = ""
 
-        while total_checker:
-
+        while checker not in ["0","1"]:
             user_input = input(cat_displayed + ": ")
-
-            checker = ""
-
-            while checker not in ["0","1"]:
-                print("Your Input" + ": " + user_input)
-                checker = input('Is this correct?' + ' ' + '(0 = No, 1 = Yes)')
-
-            if checker == "1":
-                total_checker = False
-
+            print("Your Input" + ": " + user_input)
+            checker = input('Is this correct?' + ' ' + '(0 = No, 1 = Yes)')
 
         return user_input
+
 

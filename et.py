@@ -1,24 +1,27 @@
+'''This module contains the ET class, which is used to analyze sentences for emotion terms.'''
+
 import re
 from et_structure import EmotionLine
 
 class ET:
     '''ET can, equipt with an emotion, modifier and reduction list, analyze sentences for emotion terms '''
-    
+
     def __init__(self, emotion_dict: dict, intensifiers: list, negations: list, answer_columns: list = None, labels_raising_problem: list = None) -> None:
         self.emotion_dict = emotion_dict
         self.intensifiers = intensifiers
         self.negations = negations
-        
+
         if answer_columns is None:
             answer_columns = []
         self.answer_columns = answer_columns
-        
+
         if labels_raising_problem is None:
             labels_raising_problem = []
         self.labels_raising_problem = labels_raising_problem
-        
+
 
     def check_line(self, line: EmotionLine, labels_raising_problem: list = None) -> EmotionLine:
+        '''This function checks a single line for emotion terms and its connected intensifiers and negations'''
 
         # explanation of raised problem-codes
         # 0 = match in marked column
@@ -28,15 +31,22 @@ class ET:
 
         if labels_raising_problem is None:
             labels_raising_problem = self.labels_raising_problem
-        
+
+        # all columns, which are marked to be checked, are checked for emotion terms
         for key, col in line.answers.items():
+
             tmp_checked = self.check_for_emotion(col)
-            if tmp_checked != []:
+
+            # if there were matches found, they are saved in the line
+            if tmp_checked:
+
+                # if there is no entry for the column in the matches dict, it is created
                 if key in line.matches:
                     line.matches[key].extend(tmp_checked)
                 else:
                     line.matches[key] = tmp_checked
 
+        # the number of matches is counted
         counter = 0
         for value in line.matches.values():
             counter += len(value)
@@ -46,19 +56,22 @@ class ET:
             if 3 not in line.raised_problems:
                 line.raised_problems.append(3)
             return line
-        
+
         # append error code 2, if there was more than one match found
-        elif counter > 1:
+        if counter > 1:
             if 2 not in line.raised_problems:
                 line.raised_problems.append(2)
-        
+
+        # check if there was a match with no reduction or a match in a column, which was marked to raise errors
         no_reduction = False
         label_raising_problem = False
-        #for columns in line.matches:
         for col, matches in line.matches.items():
+
+            # check if the column is marked to raise errors
             if col in labels_raising_problem:
                 label_raising_problem = True
-            
+
+            # check if there is a match with no reduction
             for match in matches:
                 if match['reduction'] == "":
                     no_reduction = True             
@@ -74,7 +87,7 @@ class ET:
         # if there are no problems and one found match, then the emotion word is set
         if len(line.raised_problems) == 0 and counter == 1:
             line.emotion_word = list(line.matches.values())[0][0]
-            
+
             # setting the last person coding to ET
             line.coder = "ET"
 
@@ -87,13 +100,14 @@ class ET:
         '''This function is the main method of ET
         if presented with a sentence in string format, it analyzes it for used emotions and its connected intensifiers and negations'''
         
-
+        # the input line is converted into a list of words
         line = self.str2list(line)
         
         # exits, if the line is empty
         if not line:
             return []
 
+        # the output list is created
         out = []
 
         # everytime a value is found, its deleted from the list of the input line
@@ -104,8 +118,11 @@ class ET:
             # the key is here, that we start at the end of the line
             matches = {}
             for emotion in self.emotion_dict.keys():
+
+                # the emotion is converted into a list of words
                 split_emotion = self.str2list(emotion)
                 try:
+                    # if the last words of the input line are the same as the emotion, the emotion is saved
                     if line[-len(split_emotion):len(line)] == split_emotion:
                         matches[emotion] = split_emotion
                 except IndexError:
