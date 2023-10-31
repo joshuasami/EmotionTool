@@ -84,15 +84,15 @@ class ET:
                     no_reduction = True      
 
         # here is checked, if all the matches are exactly the same
-        all_same = True
+        all_matches_same = True
         for matches in line.matches.values():
             for match in matches:
                 for matches2 in line.matches.values():
                     for match2 in matches2:
                         if match != match2:
-                            all_same = False
+                            all_matches_same = False
 
-        if all_same:
+        if all_matches_same:
             if 2 in line.raised_problems:
                 line.raised_problems.remove(2)
                 counter = 1
@@ -108,7 +108,7 @@ class ET:
         if label_raising_problem and 0 not in line.raised_problems:
             line.raised_problems.append(0)
 
-        if all_same and other_than_label_raising_problem and 0 in line.raised_problems:
+        if all_matches_same and other_than_label_raising_problem and 0 in line.raised_problems:
             line.raised_problems.remove(0)
 
         # append error code 4, if there was more than one negation found
