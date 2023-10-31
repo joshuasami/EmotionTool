@@ -11,14 +11,14 @@ def load_single_list(input_list: list[dict]) -> list:
 
     return out
 
-def load_double_list(input_list: list[dict]) -> dict:
+def load_emotion_dict(input_list: list[dict], row_1: str) -> dict:
     '''This function converts the input dict into a list for a single word list'''
     
     out = {}
 
     for row in input_list:
-        vals = list(row.values())
-        out[vals[0]] = vals[1]
+        emotion = row.pop(row_1)
+        out[emotion] = row
 
     return out
 
@@ -72,16 +72,14 @@ def convert_single_list(input_list: list, name: str) -> list[dict]:
 
     return out
 
-def convert_double_list(input_dict: dict, row_1: str, row_2: str) -> list[dict]:
-    '''This function converts a double list into a list of dicts. Every entry gets the same two keys, which are given by the row_1 and row_2 parameter'''
+def convert_emotion_dict(input_dict: dict, row_1: str) -> list[dict]:
+    '''This function converts the emotion dict into a list of dicts. Every entry gets the same two keys, which are given by the row_1 and row_2 parameter'''
 
     out = []
 
     for key,value in input_dict.items():
-        tmp_out = {}
-        tmp_out[row_1] = key
-        tmp_out[row_2] = value
-        out.append(tmp_out)
+        value[row_1] = key
+        out.append(value)
 
     return out
 

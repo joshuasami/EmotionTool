@@ -6,7 +6,11 @@
 INPUT_FILE_URL = "in/et_in_file.csv"
 
 # Filepath of the Emotion-Dictinary
-EMOTION_WORDS_URL = "lists/words.csv"
+# IMPORTANT: Please name the columns of the dictionary 'emotion', 'reduction', and 'valence'!
+EMOTION_WORDS_URL = "lists/words_valence.csv"
+
+# If a word has a valence on the key side of the dictionary (the word before the :), the word on the other side is used for the emotion-detection.
+VALENCE_PAIRS = {"positiv":"negativ", "negativ":"positiv", "neutral":"neutral"}
 
 # Filepath of the negation-wordlist
 NEGATIONS_URL = "lists/negation.csv"
@@ -15,6 +19,7 @@ NEGATIONS_URL = "lists/negation.csv"
 INTENSIFIER_URL = "lists/modifikator.csv"
 
 # Filepath of the output-file
+# IMPORTANT: MUST BE A CSV-FILE
 OUTPUT_FILE = "out/ETout_KEeKS_LS_EFB_09062023_605-647.csv"
 
 # Columns which are to be searched for emotions by ET
@@ -29,7 +34,7 @@ LABELS_TO_LOOK_THROUGH = ['Verständnisfrage',
 LABELS_RAISING_PROBLEMS = ['Verständnisfrage']
 
 # column-names, which should be shown next to the default columns, when "clicking through the lines".
-LABELS_TO_SHOW = ["vignette"]
+LABELS_TO_SHOW = ["ID subject", "vignette"]
 
 # Name of the coder, which is noted in the output-file
 CODER = "JSB"
@@ -45,7 +50,22 @@ ET_LABELS = {"emotion":"Emotion",
              "coder": "Coder"}
 
 # Encoding of al the input-files
-ENCODING = "utf8"
+ENCODING = "utf-8-sig"
 
 # Seperator for the csv-files
 SEPERATOR = ";"
+
+
+LOGO = """
+    ############################################################
+
+    _____                 _   _           _____           _ 
+    | ____|_ __ ___   ___ | |_(_) ___  _ _|_   ____   ___ | |
+    |  _| | '_ ` _ \ / _ \| __| |/ _ \| '_ \| |/ _ \ / _ \| |
+    | |___| | | | | | (_) | |_| | (_) | | | | | (_) | (_) | |
+    |_____|_| |_| |_|\___/ \__|_|\___/|_| |_|_|\___/ \___/|_|
+
+                                        © Bräuer & Streubel  
+
+    ############################################################
+    """

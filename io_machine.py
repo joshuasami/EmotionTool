@@ -13,7 +13,7 @@ class IOMachine:
         self.encoding = encoding
         self.delimiter = delimiter
 
-    def load_file(self, file: str, filetype: str = None, encoding: str = None, delimiter: str = None) -> dict:
+    def load_file(self, file: str, filetype: str = None, encoding: str = None, delimiter: str = None) -> dict|list:
         '''General Method to call, if you want to open a file.
         The Function will call any needed functions for different file-formats.'''
         

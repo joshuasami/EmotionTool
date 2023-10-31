@@ -1,14 +1,19 @@
 '''This is the main file of the EmotionTool. It is the only file you have to run to use the EmotionTool.'''
 
-from functions import exit_programm
-from settings import ET_LABELS, INPUT_FILE_URL, EMOTION_WORDS_URL, NEGATIONS_URL, INTENSIFIER_URL, ENCODING, SEPERATOR, OUTPUT_FILE, LABELS_TO_LOOK_THROUGH, LABELS_RAISING_PROBLEMS, CODER, LABELS_TO_SHOW
+from functions import exit_programm, check_special_letters
+from settings import ET_LABELS, INPUT_FILE_URL, EMOTION_WORDS_URL, NEGATIONS_URL, INTENSIFIER_URL, ENCODING, SEPERATOR, OUTPUT_FILE, LABELS_TO_LOOK_THROUGH, LABELS_RAISING_PROBLEMS, CODER, LABELS_TO_SHOW, VALENCE_PAIRS, LOGO
 from io_machine import IOMachine
-from et_io_conversion import load_double_list, load_single_list, load_df, convert_df, convert_double_list, convert_single_list
+from et_io_conversion import load_emotion_dict, load_single_list, load_df, convert_df, convert_emotion_dict, convert_single_list
 from et import ET
 from ec import EmotionClicker
 
 def main():
     '''Main Function'''
+
+
+    print("")
+    print(LOGO)
+    print("")
 
     # check if something was messed up in the settings-file
     if list(ET_LABELS) != ["emotion", "reduction", "intensifier", "negation", "problems", "coder"]:
@@ -22,7 +27,8 @@ def main():
     # loading wordlist
     try:
         emotion_dict_raw = io.load_file(EMOTION_WORDS_URL)
-        emotion_dict = load_double_list(emotion_dict_raw)
+        check_special_letters(emotion_dict_raw, EMOTION_WORDS_URL)
+        emotion_dict = load_emotion_dict(emotion_dict_raw, row_1='emotion')
     except Exception as error:
         print("The wordlist couldn't be loaded")
         print(error)
@@ -31,6 +37,7 @@ def main():
     # loading negation-wordlist
     try:
         negations_raw = io.load_file(NEGATIONS_URL)
+        check_special_letters(negations_raw, NEGATIONS_URL)
         negations = load_single_list(negations_raw)
     except Exception as error:
         print("The negations-wordlist couldn't be loaded")
@@ -40,6 +47,7 @@ def main():
     # loading intensifier-wordlist
     try:
         intensifiers_raw = io.load_file(INTENSIFIER_URL)
+        check_special_letters(intensifiers_raw, INTENSIFIER_URL)
         intensifiers = load_single_list(intensifiers_raw)
     except Exception as error:
         print("The intensifier-wordlist couldn't be loaded")
@@ -53,6 +61,7 @@ def main():
     try:
         header_row = io.get_csv_header(INPUT_FILE_URL)
         input_file_raw= io.load_file(INPUT_FILE_URL)
+        check_special_letters(input_file_raw, INPUT_FILE_URL)
         df = load_df(input_list=input_file_raw, labels_to_look_through=LABELS_TO_LOOK_THROUGH, et_labels=ET_LABELS)
     except Exception as error:
         print("The input-file couldn't be loaded")
@@ -62,25 +71,10 @@ def main():
 
     print("")
 
-    logo = """
-    ############################################################
 
-    _____                 _   _           _____           _ 
-    | ____|_ __ ___   ___ | |_(_) ___  _ _|_   ____   ___ | |
-    |  _| | '_ ` _ \ / _ \| __| |/ _ \| '_ \| |/ _ \ / _ \| |
-    | |___| | | | | | (_) | |_| | (_) | | | | | (_) | (_) | |
-    |_____|_| |_| |_|\___/ \__|_|\___/|_| |_|_|\___/ \___/|_|
-
-                                        © Bräuer & Streubel  
-
-    ############################################################
-    """
-
-    print(logo)
-    print("")
 
     # creating EmotionClicker instance
-    ec = EmotionClicker(df=df, et=et,coder=CODER, labels_to_show=LABELS_TO_SHOW)
+    ec = EmotionClicker(df=df, et=et,coder=CODER, labels_to_show=LABELS_TO_SHOW, valence_pairs=VALENCE_PAIRS)
 
 
     # asking the user, if they want to label the list whole list at once or line by line
@@ -119,7 +113,7 @@ def main():
     io.save_file(file=NEGATIONS_URL, output_content=negations_raw, filetype="csv")
 
     # updating the emotion-wordlist
-    emotion_dict_raw = convert_double_list(input_dict=et.emotion_dict, row_1=ET_LABELS['emotion'], row_2=ET_LABELS['reduction'])
+    emotion_dict_raw = convert_emotion_dict(input_dict=et.emotion_dict, row_1='emotion')
     io.save_file(file=EMOTION_WORDS_URL, output_content=emotion_dict_raw, filetype="csv")
 
     # good bye message

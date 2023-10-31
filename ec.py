@@ -9,15 +9,19 @@ from et_structure import EmotionLine
 class EmotionClicker:
     '''This class is used to label the data with the help of ET'''
 
-    def __init__(self, df: list, et: ET = None, coder: str = "", labels_to_show: list[str] = None) -> None:
+    def __init__(self, df: list, et: ET = None, coder: str = "", labels_to_show: list[str] = None, valence_pairs: dict[str] = None) -> None:
         self.df = df
         self.et = et
+
         if labels_to_show is None:
             labels_to_show = []
         self.labels_to_show = labels_to_show
 
-        self.coder = coder
+        if valence_pairs is None:
+            valence_pairs = {}
+        self.valence_pairs = valence_pairs
 
+        self.coder = coder
 
     def check_df(self, automatic_labeling: bool, et: ET = None, df: list = None) -> None:
         '''This function checks the whole dataframe'''
@@ -37,7 +41,8 @@ class EmotionClicker:
                 exit_programm()
             
             for i, line in enumerate(self.df):
-                self.df[i] = et.check_line(line)
+                if self.df[i].emotion_word['emotion'] == "":
+                    self.df[i] = et.check_line(line)
         
         # if automatic labeling is false, use the self.check_line function to label the data.
         # This means that the user can label the data manually
@@ -60,7 +65,7 @@ class EmotionClicker:
                             checker = ""
                             while checker not in ["0", "1", "2"]:
                                 checker = input("[0] Done\n[1] Next\n[2] Redo")
-
+                            
                             if checker == "2":
                                 rerun = True
                             elif checker == "0":
@@ -72,22 +77,17 @@ class EmotionClicker:
                                 # if the line was labeled, we have to check if the emotion word, intensifier, or negatation are already in the et, if not, we add them
                                 if len(tmp_line.emotion_word) > 0:
                                     
-                                    # we strip the emotion word from the intensifier and negation
-                                    stripped_emotion_word = tmp_line.emotion_word['emotion'].replace(tmp_line.emotion_word['intensifier'], "")
-                                    stripped_emotion_word = stripped_emotion_word.replace(tmp_line.emotion_word['negation'], "")
-                                    stripped_emotion_word = stripped_emotion_word.strip()
+                                    if 'stripped_emotion' in tmp_line.emotion_word:
+                                        if tmp_line.emotion_word['stripped_emotion'] not in et.emotion_dict:
+                                            et.emotion_dict[tmp_line.emotion_word['stripped_emotion']] = {'reduction': tmp_line.emotion_word['reduction'], 'valenz': tmp_line.emotion_word['valenz']}
 
-                                    if len(tmp_line.emotion_word['intensifier']) > 0 and tmp_line.emotion_word['intensifier'] not in self.et.intensifiers:
-                                        self.et.intensifiers.append(tmp_line.emotion_word['intensifier'])
+                                    for intensifier in tmp_line.emotion_word['intensifier']:
+                                        if intensifier not in et.intensifiers:
+                                            et.intensifiers.append(intensifier)
                                     
-                                    if len(tmp_line.emotion_word['negation']) > 0 and tmp_line.emotion_word['negation'] not in self.et.negations:
-                                        self.et.negations.append(tmp_line.emotion_word['negation'])
-                                    
-                                    if len(tmp_line.emotion_word['negation']) > 0 and f"nicht {stripped_emotion_word}" not in self.et.emotion_dict:
-                                        self.et.emotion_dict[f"nicht {stripped_emotion_word}"] = tmp_line.emotion_word['reduction']
-
-                                    elif len(tmp_line.emotion_word['negation']) == 0 and tmp_line.emotion_word['emotion'] not in self.et.emotion_dict:
-                                        self.et.emotion_dict[stripped_emotion_word] = tmp_line.emotion_word['reduction']
+                                    for negation in tmp_line.emotion_word['negation']:
+                                        if negation not in et.negations:
+                                            et.negations.append(negation)
 
                                 self.df[i] = tmp_line
 
@@ -96,9 +96,6 @@ class EmotionClicker:
                         
                     if not continue_labeling:
                         break
-
-            
-
 
     def check_line(self, line: EmotionLine) -> EmotionLine:
         '''This function checks a single line'''
@@ -112,7 +109,6 @@ class EmotionClicker:
         line = self.change_line(line=line, eingabe=eingabe)
 
         return line
-
 
     def print_line(self, line: EmotionLine, labels_to_show: list[str] = None) -> None:
         '''This function prints the line in a readable way'''
@@ -135,6 +131,7 @@ class EmotionClicker:
             try:
                 print(l + ": " + str(line.other_columns[l]))
             except KeyError:
+                print(l)
                 continue
 
         print("")
@@ -187,8 +184,8 @@ class EmotionClicker:
 
             line.emotion_word['emotion'] = '99'
             line.emotion_word['reduction'] = '99'
-            line.emotion_word['intensifier'] = ''
-            line.emotion_word['negation'] = ''
+            line.emotion_word['intensifier'] = []
+            line.emotion_word['negation'] = []
 
         # if the input is 1, we return the line without changing it
         elif eingabe == 1:
@@ -199,15 +196,66 @@ class EmotionClicker:
             
             # Emotion-Input
             line.emotion_word['emotion'] = self.get_input('Emotion')
-            
+
             # Reduction-Input
             line.emotion_word['reduction'] = self.get_input('Reduction')
 
             # Intensifier-Input
-            line.emotion_word['intensifier'] = self.get_input('Intensifier')
+            line.emotion_word['intensifier'] = []
+            continue_loop = True
+            while continue_loop:
+                intensifier_input = self.get_input('Intensifier')
+                line.emotion_word['intensifier'].append(intensifier_input)
+                
+                if intensifier_input != "":
+                    checker = ""
+                    while checker not in ["0", "1"]:
+                        checker = input("Do you want to add another intensifier? [0] No [1] Yes")
+
+                        if checker not in ["0", "1"]:
+                            print("Please choose 0 or 1")
+                            continue
+                        elif checker == "0":
+                            continue_loop = False
+                            break
+                        elif checker == "1":
+                            continue_loop = True
+                            line.emotion_word['intensifier'].append(self.get_input('Intensifier'))
+
 
             # Negation-Input
-            line.emotion_word['negation'] = self.get_input('Negation')
+            line.emotion_word['negation'] = []
+            continue_loop = True
+            while continue_loop:
+                negation_input = self.get_input('Negation')
+                line.emotion_word['negation'].append(negation_input)
+
+                if negation_input != "":
+                    checker = ""
+                    while checker not in ["0", "1"]:
+                        checker = input("Do you want to add another negation? [0] No [1] Yes")
+
+                        if checker not in ["0", "1"]:
+                            print("Please choose 0 or 1")
+                            continue
+                        elif checker == "0":
+                            continue_loop = False
+                            break
+                        elif checker == "1":
+                            continue_loop = True
+                            line.emotion_word['negation'].append(self.get_input('Negation'))
+
+            
+            # Stripped-Emotion-Input
+            line.emotion_word['emotion_stripped'] = self.get_input('Stripped Emotion')
+            if line.emotion_word['emotion_stripped'] == "":
+                line.emotion_word.pop('emotion_stripped')
+            else:
+
+                # Stripped-Reduction-Input
+                line.emotion_word['reduction_stripped'] = self.get_input('Stripped Reduction')
+                # Valenz-Input
+                line.emotion_word['valenz'] = self.get_input('Valenz')
             
         # if the input is greater than 3, we set the emotion word to the chosen-input
         else:
@@ -227,11 +275,26 @@ class EmotionClicker:
 
         # the checker variable is used to determine if the user input is valid
         checker = ""
-
-        while checker not in ["0","1"]:
+        continue_loop = True
+        while continue_loop:
+            
             user_input = input(cat_displayed + ": ")
-            print("Your Input" + ": " + user_input)
-            checker = input('Is this correct?' + ' ' + '(0 = No, 1 = Yes)')
+            print("Your Input: " + user_input)
+            
+            while checker not in ["0", "1"]:
+                checker = input("Is this correct? (0 = No, 1 = Yes)")
+
+                if checker not in ["0", "1"]:
+                    print("Please choose 0 or 1")
+                    continue
+                elif checker == "0":
+                    user_input = input(cat_displayed + ": ")
+                    print("Your Input: " + user_input)
+                elif checker == "1":
+                    continue_loop = False
+                    break
+       
+       
 
         return user_input
 
