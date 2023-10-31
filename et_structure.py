@@ -1,6 +1,5 @@
 """This module includes all structural definitions, which are used for ET"""
 
-
 class EmotionLine:
     '''This class reprents one answer of a vignette'''
     

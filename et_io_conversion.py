@@ -78,8 +78,9 @@ def convert_emotion_dict(input_dict: dict, row_1: str) -> list[dict]:
     out = []
 
     for key,value in input_dict.items():
-        value[row_1] = key
-        out.append(value)
+        tmp_out = {row_1:key}
+        tmp_out.update(value)
+        out.append(tmp_out)
 
     return out
 

@@ -1,6 +1,6 @@
 '''This is the main file of the EmotionTool. It is the only file you have to run to use the EmotionTool.'''
 
-from functions import exit_programm, check_special_letters
+from functions import exit_programm, check_special_letters, check_dicts
 from settings import ET_LABELS, INPUT_FILE_URL, EMOTION_WORDS_URL, NEGATIONS_URL, INTENSIFIER_URL, ENCODING, SEPERATOR, OUTPUT_FILE, LABELS_TO_LOOK_THROUGH, LABELS_RAISING_PROBLEMS, CODER, LABELS_TO_SHOW, VALENCE_PAIRS, LOGO
 from io_machine import IOMachine
 from et_io_conversion import load_emotion_dict, load_single_list, load_df, convert_df, convert_emotion_dict, convert_single_list
@@ -27,6 +27,8 @@ def main():
     # loading wordlist
     try:
         emotion_dict_raw = io.load_file(EMOTION_WORDS_URL)
+        if not check_dicts(emotion_dict_raw):
+            raise Exception("The table structure isn't homogeneous")
         check_special_letters(emotion_dict_raw, EMOTION_WORDS_URL)
         emotion_dict = load_emotion_dict(emotion_dict_raw, row_1='emotion')
     except Exception as error:
@@ -37,6 +39,8 @@ def main():
     # loading negation-wordlist
     try:
         negations_raw = io.load_file(NEGATIONS_URL)
+        if not check_dicts(negations_raw):
+            raise Exception("The table structure isn't homogeneous")
         check_special_letters(negations_raw, NEGATIONS_URL)
         negations = load_single_list(negations_raw)
     except Exception as error:
@@ -47,6 +51,8 @@ def main():
     # loading intensifier-wordlist
     try:
         intensifiers_raw = io.load_file(INTENSIFIER_URL)
+        if not check_dicts(intensifiers_raw):
+            raise Exception("The table structure isn't homogeneous")
         check_special_letters(intensifiers_raw, INTENSIFIER_URL)
         intensifiers = load_single_list(intensifiers_raw)
     except Exception as error:
@@ -61,6 +67,8 @@ def main():
     try:
         header_row = io.get_csv_header(INPUT_FILE_URL)
         input_file_raw= io.load_file(INPUT_FILE_URL)
+        if not check_dicts(input_file_raw):
+            raise Exception("The table structure isn't homogeneous")
         check_special_letters(input_file_raw, INPUT_FILE_URL)
         df = load_df(input_list=input_file_raw, labels_to_look_through=LABELS_TO_LOOK_THROUGH, et_labels=ET_LABELS)
     except Exception as error:
@@ -80,7 +88,7 @@ def main():
     # asking the user, if they want to label the list whole list at once or line by line
     checker = ""
     while checker not in ["0", "1"]:
-        print("You have to Options:\n[0] ET can just label the list completely for you\n[1] or go through every line, where isn't a emotion word yet and you can label it by yourself")
+        print("You have to Options:\n[0] ET can label the list completely for you\n[1] or you go through every line, where isn't a emotion word yet and you can label it by yourself. ET is still helping you with labeling")
         checker = input("What do you want to do?")
 
     if checker == "0":
@@ -102,25 +110,23 @@ def main():
 
 
     # saving the df
+
     io.save_file(file=OUTPUT_FILE, output_content=df_raw, filetype="csv", header_row=header_row)
 
     # updating the intensifier-wordlist
-    intensifiers_raw = convert_single_list(input_list=et.intensifiers, name="intensifiers")
+    intensifiers_raw = convert_single_list(input_list=ec.et.intensifiers, name="intensifiers")
     io.save_file(file=INTENSIFIER_URL, output_content=intensifiers_raw, filetype="csv")
 
     # updating the negation-wordlist
-    negations_raw = convert_single_list(input_list=et.negations, name="negations")
+    negations_raw = convert_single_list(input_list=ec.et.negations, name="negations")
     io.save_file(file=NEGATIONS_URL, output_content=negations_raw, filetype="csv")
 
     # updating the emotion-wordlist
-    emotion_dict_raw = convert_emotion_dict(input_dict=et.emotion_dict, row_1='emotion')
+    emotion_dict_raw = convert_emotion_dict(input_dict=ec.et.emotion_dict, row_1='emotion')
     io.save_file(file=EMOTION_WORDS_URL, output_content=emotion_dict_raw, filetype="csv")
 
     # good bye message
     print("Thanks for using the EmotionTool")
-    if automatic_labeling_decision:
-        print("If you want to label the table yourself now, please get the output-file out of the out folder, put it in the in folder and restart the program")
-
 
 if __name__ == "__main__":
     main()

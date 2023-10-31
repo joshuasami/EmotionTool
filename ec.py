@@ -1,7 +1,6 @@
 '''This is the Main Class, kind of like the controll center of the program. It is used to label the data with the help of ET'''
 
 from functions import exit_programm
-#from settings import *
 from et import ET
 from et_structure import EmotionLine
 
@@ -23,79 +22,87 @@ class EmotionClicker:
 
         self.coder = coder
 
-    def check_df(self, automatic_labeling: bool, et: ET = None, df: list = None) -> None:
+    def check_df(self, automatic_labeling: bool) -> None:
         '''This function checks the whole dataframe'''
 
-        # if no df is given, use the one from the class
-        if df is None:
-            df = self.df
-        
-        # if no et is given, use the one from the class
-        if et is None:
-            et = self.et
 
         # if automatic labeling is true, use the et to label the data
-        if automatic_labeling:
-            if self.et is None:
-                print("There is no instance of ET or another labelling machine loaded")
-                exit_programm()
-            
-            for i, line in enumerate(self.df):
-                if self.df[i].emotion_word['emotion'] == "":
-                    self.df[i] = et.check_line(line)
+        
+        if self.et is None:
+            print("There is no instance of ET or another labelling machine loaded")
+            exit_programm()
+        
+        for i, line in enumerate(self.df):
+            if self.df[i].emotion_word['emotion'] == "":
+                self.df[i] = self.et.check_line(line)
         
         # if automatic labeling is false, use the self.check_line function to label the data.
         # This means that the user can label the data manually
-        else:
+        if automatic_labeling:
+            return None
             
-            # the continue_labeling variable is used to determine if the user wants to continue labeling
-            continue_labeling = True
-            while continue_labeling:
-                for i, line in enumerate(df):
+        # the continue_labeling variable is used to determine if the user wants to continue labeling
+        continue_labeling = True
+        i = 0
+        while continue_labeling:
+            line = self.df[i]
 
-                    # the rerun variable is used to determine if the user wants to redo the labeling of a line
-                    rerun = True
-                    while rerun:
+            # the rerun variable is used to determine if the user wants to redo the labeling of a line
+            rerun = True
+            while rerun:
 
-                        # if there is no emotion word in the line, label it    
-                        if line.emotion_word['emotion'] == "":
-                            tmp_line = self.check_line(line)
+                # if there is no emotion word in the line, label it    
+                if line.emotion_word['emotion'] != "":
+                    break
 
-                            # the checker variable is used to determine if the user wants to continue labeling or redo the labeling of the line
-                            checker = ""
-                            while checker not in ["0", "1", "2"]:
-                                checker = input("[0] Done\n[1] Next\n[2] Redo")
-                            
-                            if checker == "2":
-                                rerun = True
-                            elif checker == "0":
-                                continue_labeling = False
-                            
-                            if checker in ["1", "0"]:
-                                rerun = False
+                tmp_line = self.check_line(line)
 
-                                # if the line was labeled, we have to check if the emotion word, intensifier, or negatation are already in the et, if not, we add them
-                                if len(tmp_line.emotion_word) > 0:
-                                    
-                                    if 'stripped_emotion' in tmp_line.emotion_word:
-                                        if tmp_line.emotion_word['stripped_emotion'] not in et.emotion_dict:
-                                            et.emotion_dict[tmp_line.emotion_word['stripped_emotion']] = {'reduction': tmp_line.emotion_word['reduction'], 'valenz': tmp_line.emotion_word['valenz']}
+                # the checker variable is used to determine if the user wants to continue labeling or redo the labeling of the line
+                checker = ""
+                while checker not in ["0", "1", "2"]:
+                    checker = input("[0] Done\n[1] Next\n[2] Redo")
+                
+                if checker == "2":
+                    continue
+                elif checker == "0":
+                    continue_labeling = False
+                
+                if checker in ["1", "0"]:
+                    rerun = False
 
-                                    for intensifier in tmp_line.emotion_word['intensifier']:
-                                        if intensifier not in et.intensifiers:
-                                            et.intensifiers.append(intensifier)
-                                    
-                                    for negation in tmp_line.emotion_word['negation']:
-                                        if negation not in et.negations:
-                                            et.negations.append(negation)
+                new_word_added = False
 
-                                self.df[i] = tmp_line
+                # if the line was labeled, we have to check if the emotion word, intensifier, or negatation are already in the et, if not, we add them
+                if len(tmp_line.emotion_word) > 0:
+                    if 'emotion_stripped' in tmp_line.emotion_word:
+                        if tmp_line.emotion_word['emotion_stripped'] not in self.et.emotion_dict:
+                            self.et.emotion_dict[tmp_line.emotion_word['emotion_stripped']] = {'reduction': tmp_line.emotion_word['reduction_stripped'], 'valence': tmp_line.emotion_word['valenz']}
+                            new_word_added = True
 
-                        else:
-                            rerun = False
-                        
-                    if not continue_labeling:
-                        break
+                    for intensifier in tmp_line.emotion_word['intensifier']:
+                        if intensifier not in self.et.intensifiers:
+                            self.et.intensifiers.append(intensifier)
+                            new_word_added = True
+                    
+                    for negation in tmp_line.emotion_word['negation']:
+                        if negation not in self.et.negations:
+                            self.et.negations.append(negation)
+                            new_word_added = True
+
+                self.df[i] = tmp_line
+                if new_word_added and self.et is not None:
+                    print(tmp_line.emotion_word['emotion_stripped'])
+                    for et_i, tmp_line in enumerate(self.df):
+                        if self.df[et_i].emotion_word['emotion'] == "":
+                            self.df[et_i] = self.et.check_line(tmp_line)
+
+                
+            if not continue_labeling:
+                break
+
+            i += 1
+            if i >= len(self.df):
+                i = 0
 
     def check_line(self, line: EmotionLine) -> EmotionLine:
         '''This function checks a single line'''
@@ -221,6 +228,8 @@ class EmotionClicker:
                         elif checker == "1":
                             continue_loop = True
                             line.emotion_word['intensifier'].append(self.get_input('Intensifier'))
+                else:
+                    continue_loop = False
 
 
             # Negation-Input
@@ -244,6 +253,8 @@ class EmotionClicker:
                         elif checker == "1":
                             continue_loop = True
                             line.emotion_word['negation'].append(self.get_input('Negation'))
+                else:
+                    continue_loop = False
 
             
             # Stripped-Emotion-Input
@@ -290,6 +301,7 @@ class EmotionClicker:
                 elif checker == "0":
                     user_input = input(cat_displayed + ": ")
                     print("Your Input: " + user_input)
+                    checker = ""
                 elif checker == "1":
                     continue_loop = False
                     break

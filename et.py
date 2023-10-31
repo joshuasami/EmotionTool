@@ -19,7 +19,6 @@ class ET:
             labels_raising_problem = []
         self.labels_raising_problem = labels_raising_problem
 
-
     def check_line(self, line: EmotionLine, labels_raising_problem: list = None) -> EmotionLine:
         '''This function checks a single line for emotion terms and its connected intensifiers and negations'''
 
@@ -32,6 +31,9 @@ class ET:
 
         if labels_raising_problem is None:
             labels_raising_problem = self.labels_raising_problem
+
+        line.matches = {}
+        line.raised_problems = []
 
         # all columns, which are marked to be checked, are checked for emotion terms
         for key, col in line.answers.items():
