@@ -87,15 +87,13 @@ def main():
 
     # asking the user, if they want to label the list whole list at once or line by line
     checker = ""
-    while checker not in ["0", "1"]:
+    decision_map = {"0": True, "1": False}
+    while checker not in decision_map:
         print("You have to Options:\n[0] ET can label the list completely for you\n[1] or you go through every line, where isn't a emotion word yet and you can label it by yourself. ET is still helping you with labeling")
         checker = input("What do you want to do?")
 
-    if checker == "0":
-        automatic_labeling_decision = True
-
-    if checker == "1":
-        automatic_labeling_decision = False
+    
+    automatic_labeling_decision = decision_map.get(checker, False)
 
     # labeling the list
     ec.check_df(automatic_labeling_decision)
