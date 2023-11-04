@@ -201,11 +201,11 @@ class ET:
 
             while len(line)>0:
                     
-                    line, found_negation_tmp = self.get_longest_match(line, self.negations)
-                    if found_negation_tmp == "":
-                        break
-                    else:
-                        matches_tmp.insert(0,found_negation_tmp)
+                line, found_negation_tmp = self.get_longest_match(line, self.negations)
+                if found_negation_tmp == "":
+                    break
+                else:
+                    matches_tmp.insert(0,found_negation_tmp)
 
             found_negation = matches_tmp
 
