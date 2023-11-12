@@ -2,14 +2,14 @@
 
 import re
 from et_structure import EmotionLine
+from et_structure import Wordlist
 
 class ET:
     '''ET can, equipt with an emotion, modifier and reduction list, analyze sentences for emotion terms '''
 
-    def __init__(self, emotion_dict: dict, intensifiers: list, negations: list, answer_columns: list = None, labels_raising_problem: list = None) -> None:
-        self.emotion_dict = emotion_dict
-        self.intensifiers = intensifiers
-        self.negations = negations
+    def __init__(self, wordlist: Wordlist, answer_columns: list = None, labels_raising_problem: list = None) -> None:
+        
+        self.wordlist = wordlist
 
         if answer_columns is None:
             answer_columns = []
@@ -50,9 +50,7 @@ class ET:
                     line.matches[key] = tmp_checked
 
         # the number of matches is counted
-        counter = 0
-        for value in line.matches.values():
-            counter += len(value)
+        counter = sum(len(value) for value in line.matches.values())
 
         # append error-code 3, if there were no matches found
         if counter == 0:
@@ -86,13 +84,8 @@ class ET:
                     no_reduction = True      
 
         # here is checked, if all the matches are exactly the same
-        all_matches_same = True
-        for matches in line.matches.values():
-            for match in matches:
-                for matches2 in line.matches.values():
-                    for match2 in matches2:
-                        if match != match2:
-                            all_matches_same = False
+        all_matches = [match for matches in line.matches.values() for match in matches]
+        all_matches_same = all(match == all_matches[0] for match in all_matches)
 
         if all_matches_same:
             if 2 in line.raised_problems:
@@ -118,20 +111,19 @@ class ET:
             line.raised_problems.append(4)
 
         # all negations and intensifiers are joined to a string with a ", "
-        for match in line.matches.values():
+        '''for match in line.matches.values():
             for entry in match:
                 entry['negation'] = ', '.join(entry['negation'])
                 entry['intensifier'] = ', '.join(entry['intensifier'])
-
+        '''
+        
         # if there are no problems and one found match, then the emotion word is set
         if len(line.raised_problems) == 0 and counter == 1:
             line.emotion_word = list(line.matches.values())[0][0]
+            line.is_labelled = True
 
             # setting the last person coding to ET
             line.coder = "ET"
-
-
-
 
         return line
 
@@ -161,7 +153,7 @@ class ET:
             found_intensifier = []
             found_negation = []
 
-            line, found_emotion = self.get_longest_match(line, self.emotion_dict.keys())
+            line, found_emotion = self.get_longest_match(line, self.wordlist.get_emotions())
             
             if found_emotion == "":
                 line = line[:-1]
@@ -174,7 +166,7 @@ class ET:
 
             while len(line)>0:
 
-                line, found_intensifier_tmp = self.get_longest_match(line, self.intensifiers)
+                line, found_intensifier_tmp = self.get_longest_match(line, self.wordlist.get_intensifiers())
                 if found_intensifier_tmp == "":
                     break
                 else:
@@ -186,7 +178,7 @@ class ET:
             split_emotion = self.str2list(found_emotion)
 
             while len(split_emotion) > 0:
-                split_emotion, found_intensifier_tmp = self.get_longest_match(split_emotion, self.intensifiers)
+                split_emotion, found_intensifier_tmp = self.get_longest_match(split_emotion, self.wordlist.get_intensifiers())
                 if found_intensifier_tmp == "":
                     split_emotion = split_emotion[:-1]
                     continue
@@ -201,7 +193,7 @@ class ET:
 
             while len(line)>0:
                     
-                line, found_negation_tmp = self.get_longest_match(line, self.negations)
+                line, found_negation_tmp = self.get_longest_match(line, self.wordlist.get_negations())
                 if found_negation_tmp == "":
                     break
                 else:
@@ -212,7 +204,7 @@ class ET:
             matches_tmp = []
             split_emotion = self.str2list(found_emotion)
             while len(split_emotion) > 0:
-                split_emotion, found_negation_tmp = self.get_longest_match(split_emotion, self.negations)
+                split_emotion, found_negation_tmp = self.get_longest_match(split_emotion, self.wordlist.get_negations())
                 if found_negation_tmp == "":
                     split_emotion = split_emotion[:-1]
                     continue
@@ -225,17 +217,17 @@ class ET:
             # if there was a negation found, the reduction is set to the opposite of the reduction connected to the found emotion
         
             if len(found_negation) == 1:
-                if self.emotion_dict[found_emotion]['valence'] == "negativ":
+                if self.wordlist.get_valence(found_emotion) == "negativ":
                     found_reduction = 'positiv'
-                elif self.emotion_dict[found_emotion]['valence'] == "positiv":
+                elif self.wordlist.get_valence(found_emotion) == "positiv":
                     found_reduction = 'negativ'
-                elif self.emotion_dict[found_emotion]['valence'] == "neutral":
+                elif self.wordlist.get_valence(found_emotion) == "neutral":
                     found_reduction = 'neutral'
             
 
             elif len(found_negation) == 0:
                 # the reduction connected to the found emotion is saved
-                found_reduction = self.emotion_dict[found_emotion]['reduction']
+                found_reduction = self.wordlist.get_reduction(found_emotion)
 
             else:
                 found_reduction = ''

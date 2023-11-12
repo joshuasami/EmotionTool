@@ -2,13 +2,16 @@
 
 from functions import exit_programm
 from et import ET
-from et_structure import EmotionLine
+from et_structure import EmotionLine, DataFrame
+from user_interface import UserInterface
 
 
-class EmotionClicker:
+class EmotionTool:
     '''This class is used to label the data with the help of ET'''
 
-    def __init__(self, df: list, et: ET = None, coder: str = "", labels_to_show: list[str] = None, valence_pairs: dict[str] = None) -> None:
+    def __init__(self, ui: UserInterface, df: DataFrame, et: ET = None, coder: str = "", labels_to_show: list[str] = None, valence_pairs: dict[str] = None) -> None:
+        
+        self.ui = ui
         self.df = df
         self.et = et
 
@@ -24,17 +27,16 @@ class EmotionClicker:
 
     def check_df(self, automatic_labeling: bool) -> None:
         '''This function checks the whole dataframe'''
-
-
-        # if automatic labeling is true, use the et to label the data
         
         if self.et is None:
-            print("There is no instance of ET or another labelling machine loaded")
+            self.ui.display_message("There is no instance of ET or another labelling machine loaded")
             exit_programm()
         
-        for i, line in enumerate(self.df):
-            if self.df[i].emotion_word['emotion'] == "":
-                self.df[i] = self.et.check_line(line)
+        # the dataframe is labeled by ET automaticly once
+        self.automatic_labeling()
+        self.df.save_df()
+
+
         
         # if automatic labeling is false, use the self.check_line function to label the data.
         # This means that the user can label the data manually
@@ -43,66 +45,85 @@ class EmotionClicker:
             
         # the continue_labeling variable is used to determine if the user wants to continue labeling
         continue_labeling = True
-        i = 0
+
         while continue_labeling:
-            line = self.df[i]
 
-            # the rerun variable is used to determine if the user wants to redo the labeling of a line
-            rerun = True
-            while rerun:
+            for line in self.df.iterate_rows():
 
-                # if there is no emotion word in the line, label it    
-                if line.emotion_word['emotion'] != "":
+                # the rerun variable is used to determine if the user wants to redo the labeling of a line
+                rerun = True
+                while rerun:
+
+                    # if the line is already labeled, we skip it  
+                    if line.is_labelled:
+                        break
+
+                    # the line is labeled
+                    checked_line = self.check_line(line)
+
+                    # the checker variable is used to determine if the user wants to continue labeling or redo the labeling of the line
+                    checker = ""
+                    decision_map = {"0": "Done", "1": "Next", "2": "Redo"}
+
+                    while checker not in ["0", "1", "2"]:
+                        checker = self.ui.get_input("[0] Done\n[1] Next\n[2] Redo")
+                    
+                    decision = decision_map.get(checker, "Done")
+
+                    if decision == "Redo":
+                        continue
+
+                    if decision in ["Done", "Next"]:
+                        rerun = False
+
+                    if decision == "Done":
+                        continue_labeling = False
+                    
+
+                    new_word_added = self.add_words(line=checked_line)
+
+                    line = checked_line
+
+                    if line.is_labelled:
+                        self.df.save_df()
+
+
+                    if new_word_added and self.et is not None:
+                        self.et.wordlist.save_wordlists()
+                        self.automatic_labeling()
+
+                if not continue_labeling:
                     break
 
-                tmp_line = self.check_line(line)
+    def add_words(self, line: EmotionLine) -> bool:
+        '''This function adds the words from the line to et'''
+        
+        new_words_added = False
 
-                # the checker variable is used to determine if the user wants to continue labeling or redo the labeling of the line
-                checker = ""
-                while checker not in ["0", "1", "2"]:
-                    checker = input("[0] Done\n[1] Next\n[2] Redo")
-                
-                if checker == "2":
-                    continue
-                elif checker == "0":
-                    continue_labeling = False
-                
-                if checker in ["1", "0"]:
-                    rerun = False
+        # if the line was labeled, we have to check if the emotion word, intensifier, or negatation are already in the et, if not, we add them
+        if len(line.emotion_word) > 0:
+            if 'emotion_stripped' in line.emotion_word:
+                if not self.et.wordlist.is_emotion(line.emotion_word['emotion_stripped']):
+                    self.et.wordlist.add_emotion(emotion=line.emotion_word['emotion_stripped'], reduction=line.emotion_word['reduction_stripped'], valenz=line.emotion_word['valenz'])
+                    new_words_added = True
 
-                new_word_added = False
+            for intensifier in line.emotion_word['intensifier']:
+                if not self.et.wordlist.is_intensifier(intensifier):
+                    self.et.wordlist.add_intensifier(intensifier)
+                    new_words_added = True
+            
+            for negation in line.emotion_word['negation']:
+                if not self.et.wordlist.is_negation(negation):
+                    self.et.wordlist.add_negation(negation)
+                    new_words_added = True
 
-                # if the line was labeled, we have to check if the emotion word, intensifier, or negatation are already in the et, if not, we add them
-                if len(tmp_line.emotion_word) > 0:
-                    if 'emotion_stripped' in tmp_line.emotion_word:
-                        if tmp_line.emotion_word['emotion_stripped'] not in self.et.emotion_dict:
-                            self.et.emotion_dict[tmp_line.emotion_word['emotion_stripped']] = {'reduction': tmp_line.emotion_word['reduction_stripped'], 'valence': tmp_line.emotion_word['valenz']}
-                            new_word_added = True
-
-                    for intensifier in tmp_line.emotion_word['intensifier']:
-                        if intensifier not in self.et.intensifiers:
-                            self.et.intensifiers.append(intensifier)
-                            new_word_added = True
-                    
-                    for negation in tmp_line.emotion_word['negation']:
-                        if negation not in self.et.negations:
-                            self.et.negations.append(negation)
-                            new_word_added = True
-
-                self.df[i] = tmp_line
-                if new_word_added and self.et is not None:
-                    print(tmp_line.emotion_word['emotion_stripped'])
-                    for et_i, tmp_line in enumerate(self.df):
-                        if self.df[et_i].emotion_word['emotion'] == "":
-                            self.df[et_i] = self.et.check_line(tmp_line)
-
-                
-            if not continue_labeling:
-                break
-
-            i += 1
-            if i >= len(self.df):
-                i = 0
+        return new_words_added
+          
+    def automatic_labeling(self) -> None:
+        '''This function labels the data automatically'''
+        for line in self.df.iterate_rows():
+            if not line.is_labelled:
+                line = self.et.check_line(line)
 
     def check_line(self, line: EmotionLine) -> EmotionLine:
         '''This function checks a single line'''
@@ -123,62 +144,62 @@ class EmotionClicker:
         if labels_to_show is None:
             labels_to_show = self.labels_to_show
         
-        print("\n###########\n")
+        self.ui.display_message("\n###########\n")
 
         # prints all line, which possibly could contain an emotion word
         for label,value in line.answers.items():
 
-            print(str(label) + ": " + str(value))
+            self.ui.display_message(str(label) + ": " + str(value))
         
-        print("")
+        self.ui.display_message("")
 
         # prints all labels, which are in the labels_to_show list
         # if the label is not in the line, it will be skipped
         for l in labels_to_show:
             try:
-                print(l + ": " + str(line.other_columns[l]))
+                self.ui.display_message(l + ": " + str(line.other_columns[l]))
             except KeyError:
-                print(l)
+                self.ui.display_message(l)
                 continue
 
-        print("")
+        self.ui.display_message("")
         
         # prints all problems, which were found in the line
-        print(f"Problems found: {', '.join([str(p) for p in line.raised_problems])}")
+        self.ui.display_message(f"Problems found: {', '.join([str(p) for p in line.raised_problems])}")
 
-        print("")
+        self.ui.display_message("")
 
         # prints all matches, which were found in the line
         for col, matches in line.matches.items():
-            print(f"Column: {col}")
+            self.ui.display_message(f"Column: {col}")
             for match in matches:
-                print(f"Emotion: {match['emotion']}, Reduction: {match['reduction']}, Intensifier: {match['intensifier']}, Negation: {match['negation']}")
+                self.ui.display_message(f"Emotion: {match['emotion']}, Reduction: {match['reduction']}, Intensifier: {match['intensifier']}, Negation: {match['negation']}")
 
-            print("")
+            self.ui.display_message("")
         
     def get_ec_decision(self, line: EmotionLine) -> str:
         '''This function asks the user for the decision'''
         
-        print("")
+        self.ui.display_message("")
 
-        print("[1] - skip")
+        self.ui.display_message("[1] - skip")
 
-        print("[2] - own input")
+        self.ui.display_message("[2] - own input")
 
-        print("[3] - 99")
+        self.ui.display_message("[3] - 99")
 
         # creates a list of all matches
         matches_as_list = [item for sublist in line.matches.values() for item in sublist]
 
         # prints all matches, which were found in the line. We add 4 to the index, because the first 3 options are already taken
         for index in range(4, len(matches_as_list)+ 4):
-            print("[" + str(index) + "] - " + matches_as_list[index-4]['emotion'])
+            self.ui.display_message("[" + str(index) + "] - " + matches_as_list[index-4]['emotion'])
 
         # the checker variable is used to determine if the user input is valid
         checker = ""
         checker_options = [str(x) for x in list(range(1, len(matches_as_list) + 4))]
         while checker not in checker_options:
-            checker = input("Please choose: ")
+            checker = self.ui.get_input("Please choose: ")
 
         return int(checker)
 
@@ -277,6 +298,7 @@ class EmotionClicker:
             line.emotion_word['negation'] = matches_as_list[eingabe-4]['negation']
         
         # setting the coder to the coder from the class 
+        line.is_labelled = True
         line.coder = self.coder
 
         return line
@@ -289,18 +311,18 @@ class EmotionClicker:
         continue_loop = True
         while continue_loop:
             
-            user_input = input(cat_displayed + ": ")
-            print("Your Input: " + user_input)
+            user_input = self.ui.get_input(cat_displayed + ": ")
+            self.ui.display_message("Your Input: " + user_input)
             
             while checker not in ["0", "1"]:
-                checker = input("Is this correct? (0 = No, 1 = Yes)")
+                checker = self.ui.get_input("Is this correct? (0 = No, 1 = Yes)")
 
                 if checker not in ["0", "1"]:
-                    print("Please choose 0 or 1")
+                    self.ui.display_message("Please choose 0 or 1")
                     continue
                 elif checker == "0":
-                    user_input = input(cat_displayed + ": ")
-                    print("Your Input: " + user_input)
+                    user_input = self.ui.get_input(cat_displayed + ": ")
+                    self.ui.display_message("Your Input: " + user_input)
                     checker = ""
                 elif checker == "1":
                     continue_loop = False
@@ -309,5 +331,4 @@ class EmotionClicker:
        
 
         return user_input
-
 

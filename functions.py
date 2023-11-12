@@ -1,6 +1,7 @@
 '''This module contains random functions, which are used in the main programm.'''
 import sys
 import re
+from user_interface import UserInterface
 
 def exit_programm() -> None:
     """Exits the programm with exit-code 0"""
