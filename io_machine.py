@@ -37,7 +37,7 @@ class IOMachine:
         
         try:
             # opening json-File
-            with open(file, encoding=encoding) as jsonfile:
+            with open(file, encoding=encoding, newline='') as jsonfile:
                 out = json.load(jsonfile)
         except Exception as error:
             self.ui.display_message(f"The json-file {file} couldn't be loaded.")
@@ -52,7 +52,7 @@ class IOMachine:
         
         try:
             # opening csv-File
-            with open(file, encoding=encoding) as csvfile:
+            with open(file, encoding=encoding, newline='') as csvfile:
                 csv_reader = csv.DictReader(csvfile, delimiter=delimiter)
                 out = list(csv_reader)
         except Exception as error:
@@ -92,7 +92,7 @@ class IOMachine:
         '''Method to save Json-Files'''
         try:
             # opening json-File
-            with open(file, "w", encoding=encoding) as jsonfile:
+            with open(file, "w", encoding=encoding, newline='') as jsonfile:
                 json.dump(output_content, jsonfile, indent=4)
         except Exception as error:
             self.ui.display_message(f"The json-file {file} couldn't be saved.")
@@ -108,7 +108,7 @@ class IOMachine:
                 header_row = output_content[0].keys()
 
             # opening and writing csv-File
-            with open(file, "w", encoding=encoding) as csvfile:
+            with open(file, "w", encoding=encoding, newline='') as csvfile:
                 csv_writer = csv.DictWriter(csvfile, delimiter=delimiter, fieldnames=header_row)
                 csv_writer.writeheader()
                 csv_writer.writerows(output_content)
@@ -122,7 +122,7 @@ class IOMachine:
         
 
         try:
-            with open(file, encoding=self.encoding) as csvfile:
+            with open(file, encoding=self.encoding, newline='') as csvfile:
                 csv_reader = csv.DictReader(csvfile, delimiter=self.delimiter)
                 header_row = csv_reader.fieldnames
         except Exception as error:

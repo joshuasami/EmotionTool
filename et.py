@@ -2,7 +2,7 @@
 
 import re
 from et_structure import EmotionLine
-from et_structure import Wordlist
+from et_structure import Wordlist, EmotionWord
 
 class ET:
     '''ET can, equipt with an emotion, modifier and reduction list, analyze sentences for emotion terms '''
@@ -54,14 +54,14 @@ class ET:
 
         # append error-code 3, if there were no matches found
         if counter == 0:
-            if 3 not in line.raised_problems:
-                line.raised_problems.append(3)
+            if "3" not in line.raised_problems:
+                line.raised_problems.append("3")
             return line
 
         # append error code 2, if there was more than one match found
         if counter > 1:
-            if 2 not in line.raised_problems:
-                line.raised_problems.append(2)
+            if "2" not in line.raised_problems:
+                line.raised_problems.append("2")
 
         # check if there was a match with no reduction or a match in a column, which was marked to raise errors
         no_reduction = False
@@ -78,9 +78,9 @@ class ET:
 
             # check if there is a match with no reduction
             for match in matches:
-                if len(match['negation']) > 1:
+                if len(match.get_negation()) > 1:
                     multiple_negations = True
-                if match['reduction'] == "":
+                if match.get_reduction() == "":
                     no_reduction = True      
 
         # here is checked, if all the matches are exactly the same
@@ -88,35 +88,29 @@ class ET:
         all_matches_same = all(match == all_matches[0] for match in all_matches)
 
         if all_matches_same:
-            if 2 in line.raised_problems:
-                line.raised_problems.remove(2)
+            if "2" in line.raised_problems:
+                line.raised_problems.remove("2")
                 counter = 1
                  
 
         # append error code 1, if there was a match with no reduction
-        if no_reduction and 1 not in line.raised_problems:
-            line.raised_problems.append(1)
+        if no_reduction and "1" not in line.raised_problems:
+            line.raised_problems.append("1")
         
 
 
         # append error code 0, if there was a match in a column, which was marked to raise errors
-        if label_raising_problem and 0 not in line.raised_problems:
-            line.raised_problems.append(0)
+        if label_raising_problem and "0" not in line.raised_problems:
+            line.raised_problems.append("0")
 
-        if all_matches_same and other_than_label_raising_problem and 0 in line.raised_problems:
-            line.raised_problems.remove(0)
+        if all_matches_same and other_than_label_raising_problem and "0" in line.raised_problems:
+            line.raised_problems.remove("0")
 
         # append error code 4, if there was more than one negation found
-        if multiple_negations and 4 not in line.raised_problems:
-            line.raised_problems.append(4)
+        if multiple_negations and "4" not in line.raised_problems:
+            line.raised_problems.append("4")
 
-        # all negations and intensifiers are joined to a string with a ", "
-        '''for match in line.matches.values():
-            for entry in match:
-                entry['negation'] = ', '.join(entry['negation'])
-                entry['intensifier'] = ', '.join(entry['intensifier'])
-        '''
-        
+
         # if there are no problems and one found match, then the emotion word is set
         if len(line.raised_problems) == 0 and counter == 1:
             line.emotion_word = list(line.matches.values())[0][0]
@@ -243,12 +237,12 @@ class ET:
 
             # the found emotion, reduction, intensifier and negation are saved in a dict and appended to the output list
             out.append(
-                {'emotion':found_emotion,
-                 'reduction':found_reduction,
-                 'intensifier':found_intensifier,
-                 'negation':found_negation
-                 })
-        
+                EmotionWord(emotion=found_emotion,
+                            reduction=found_reduction,
+                            intensifier=found_intensifier,
+                            negation=found_negation
+                            )
+            )
         return out
 
     def get_longest_match(self, line: str, wordlist: list) -> (str,str):

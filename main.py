@@ -1,7 +1,7 @@
 '''This is the main file of the EmotionTool. It is the only file you have to run to use the EmotionTool.'''
 
 from functions import exit_programm
-from settings import ET_LABELS, OUTPUT_FILE_URL, INPUT_FILE_URL, ENCODING, SEPERATOR, EMOTION_WORDS_URL, NEGATIONS_URL, INTENSIFIER_URL, LABELS_RAISING_PROBLEMS, CODER, LABELS_TO_LOOK_THROUGH, LABELS_TO_SHOW, VALENCE_PAIRS, LOGO
+from settings import ET_LABELS, OUTPUT_FILE_URL, INPUT_FILE_URL, ENCODING, SEPERATOR, EMOTION_WORDS_URL, NEGATIONS_URL, INTENSIFIER_URL, LABELS_RAISING_PROBLEMS, CODER, LABELS_TO_LOOK_THROUGH, LABELS_TO_SHOW, VALENCE_PAIRS, LOGO, NO_EMOTION_FOUND_LABEL
 from io_machine import IOMachine
 from et import ET
 from emotion_tool import EmotionTool
@@ -34,7 +34,7 @@ def main():
     df = DataFrame(input_file_url=INPUT_FILE_URL, output_file_url=OUTPUT_FILE_URL, io=io, labels_to_look_through=LABELS_TO_LOOK_THROUGH, et_labels=ET_LABELS)
 
     # creating EmotionTool instance
-    emotion_tool = EmotionTool(ui=ui, df=df, et=et,coder=CODER, labels_to_show=LABELS_TO_SHOW, valence_pairs=VALENCE_PAIRS)
+    emotion_tool = EmotionTool(ui=ui, df=df, et=et,coder=CODER, labels_to_show=LABELS_TO_SHOW, valence_pairs=VALENCE_PAIRS, no_emotion_found_label=NO_EMOTION_FOUND_LABEL)
 
     # asking the user, if they want to label the list whole list at once or line by line
     checker = ""

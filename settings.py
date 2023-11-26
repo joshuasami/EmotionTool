@@ -63,8 +63,9 @@ WORDLIST_LABELS = {
     "valence": "valence",
     "intensifier": "intensifiers",
     "negation": "negations"
-
 }
+
+NO_EMOTION_FOUND_LABEL = "99"
 
 # Encoding of al the input-files
 ENCODING = "utf-8-sig"

@@ -4,36 +4,92 @@ from io_machine import IOMachine
 from typing import Iterator
 
 class EmotionWord:
-    def __init__(self, emotion: str, reduction: str, intensifier: list[str] = None, negation: list[str] = None) -> None:
+    def __init__(self, emotion: str, reduction: str, intensifier: str|list[str] = None, negation: str|list[str] = None, emotion_stripped: dict = None) -> None:
         self.emotion = emotion
         self.reduction = reduction
         
         if intensifier is None:
             intensifier = []
+        elif isinstance(intensifier, str):
+            intensifier = intensifier.split()
         self.intensifier = intensifier
 
         if negation is None:
             negation = []
+        elif isinstance(negation, str):
+            negation = negation.split()
         self.negation = negation
 
-    def __str__(self) -> str:
+        if emotion_stripped is None:
+            emotion_stripped = {}
+        self.emotion_stripped = emotion_stripped
+
+    def __repr__(self) -> str:
         return f"EmotionWord(emotion={self.emotion}, reduction={self.reduction}, intensifier={self.intensifier}, negation={self.negation})"
     
+    def __str__(self) -> str:
+        return f"Emotion: {self.emotion}, Reduction: {self.reduction}, Intensifier: {self.get_intensifier_string()}, Negation: {self.get_negation_string()}"
+
+    def __eq__(self, other):
+        if isinstance(other, EmotionWord):
+            return (self.emotion == other.emotion and
+                    self.reduction == other.reduction and
+                    self.intensifier == other.intensifier and
+                    self.negation == other.negation)
+        return False
+    
+    def get_emotion(self) -> str:
+        '''This function returns the emotion word'''
+        return self.emotion
+
+    def get_reduction(self) -> str:
+        '''This function returns the reduction'''
+        return self.reduction
+    
+    def get_intensifier(self) -> list[str]:
+        return self.intensifier
+    
+    def get_negation(self) -> list[str]:
+        return self.negation
+    
+    def get_emotion_stripped(self) -> dict:
+        return self.emotion_stripped
+    
+    def set_emotion_stripped(self, emotion: str, reduction: str, valence: str) -> None:
+        self.emotion_stripped = {'emotion':emotion, 'reduction':reduction, 'valence':valence}
+    
+    def get_stripped_emotion(self) -> str:
+        return self.emotion_stripped['emotion']
+    
+    def get_stripped_reduction(self) -> str:
+        return self.emotion_stripped['reduction']
+    
+    def get_valence(self) -> str:
+        return self.emotion_stripped['valence']
+
     def get_intensifier_string(self) -> str:
         return ', '.join(self.intensifier)
     
     def get_negation_string(self) -> str:
         return ', '.join(self.negation)
-
+    
+    def set_emotion_word(self, emotion: str, reduction: str, intensifier: list[str], negation: list[str]) -> None:
+        self.emotion = emotion
+        self.reduction = reduction
+        self.intensifier = intensifier
+        self.negation = negation
+    
+    def exists_stripped(self) -> bool:
+        return bool(self.emotion_stripped)
 
 class EmotionLine:
     '''This class reprents one answer of a vignette'''
     
     def __init__(self, answers: dict,
                  other_columns: dict = None,
-                 emotion_word: dict = None,
+                 emotion_word: EmotionWord = None,
                  matches: dict = None, 
-                 raised_problems: list = None,
+                 raised_problems: str|list = None,
                  coder: str = "", ) -> None:
         
         
@@ -41,10 +97,10 @@ class EmotionLine:
         self.other_columns = other_columns
 
         if emotion_word is None:
-            emotion_word = {}
+            emotion_word = EmotionWord(emotion='', reduction='')
         self.emotion_word = emotion_word
         
-        if 'emotion' in self.emotion_word.keys() and self.emotion_word['emotion'] != '':
+        if self.emotion_word.get_emotion() != '':
             self.is_labelled = True
         else:
             self.is_labelled = False
@@ -52,6 +108,8 @@ class EmotionLine:
         
         if raised_problems is None:
             raised_problems = []
+        elif isinstance(raised_problems, str):
+            raised_problems = [i for i in raised_problems.split()]
         self.raised_problems = raised_problems
 
         if matches is None:
@@ -59,6 +117,21 @@ class EmotionLine:
         self.matches = matches
 
         self.coder = coder
+
+    def __repr__(self) -> str:
+        return f"EmotionLine(answers={self.answers}, other_columns={self.other_columns}, emotion_word={self.emotion_word}, matches={self.matches}, raised_problems={self.raised_problems}, coder={self.coder})"
+    
+    def get_raised_problems_string(self) -> list:
+        return ' '.join(self.raised_problems)
+    
+    def update_from_other(self, other):
+        self.answers = other.answers
+        self.other_columns = other.other_columns
+        self.emotion_word = other.emotion_word
+        self.is_labelled = other.is_labelled
+        self.raised_problems = other.raised_problems
+        self.matches = other.matches
+        self.coder = other.coder
         
 class DataFrame:
     '''This class stores a dataframe of ET answers'''
@@ -103,7 +176,7 @@ class DataFrame:
                 if key in self.labels_to_look_through:
                     answers[key] = value
                 elif key == self.et_labels['problems']:
-                    raised_problems = [int(i) for i in value.split()]
+                    raised_problems = value
                 elif key == self.et_labels['coder']:
                     coder = value
                 elif key == self.et_labels['emotion']:
@@ -111,15 +184,15 @@ class DataFrame:
                 elif key == self.et_labels['reduction']:
                     emotion_word['reduction'] = value
                 elif key == self.et_labels['intensifier']:
-                    emotion_word['intensifier'] = value.split(', ')
+                    emotion_word['intensifier'] = value
                 elif key == self.et_labels['negation']:
-                    emotion_word['negation'] = value.split(', ')
+                    emotion_word['negation'] = value
                 else:
                     other_columns[key] = value
 
             out.append(EmotionLine(answers=answers, 
                                 other_columns=other_columns, 
-                                emotion_word=emotion_word, 
+                                emotion_word=EmotionWord(emotion=emotion_word['emotion'], reduction=emotion_word['reduction'], intensifier=emotion_word['intensifier'], negation=emotion_word['negation']),
                                 coder=coder,
                                 raised_problems=raised_problems))
 
@@ -135,11 +208,11 @@ class DataFrame:
 
             tmp_out.update(line.answers)
             tmp_out.update(line.other_columns)
-            tmp_out.update({self.et_labels['emotion']:line.emotion_word['emotion']})
-            tmp_out.update({self.et_labels['reduction']:line.emotion_word['reduction']})
-            tmp_out.update({self.et_labels['intensifier']:', '.join(line.emotion_word['intensifier'])})
-            tmp_out.update({self.et_labels['negation']:', '.join(line.emotion_word['negation'])})
-            tmp_out.update({self.et_labels['problems']:' '.join([str(p) for p in line.raised_problems])})
+            tmp_out.update({self.et_labels['emotion']:line.emotion_word.get_emotion()})
+            tmp_out.update({self.et_labels['reduction']:line.emotion_word.get_reduction()})
+            tmp_out.update({self.et_labels['intensifier']:line.emotion_word.get_intensifier_string()})
+            tmp_out.update({self.et_labels['negation']:line.emotion_word.get_negation_string()})
+            tmp_out.update({self.et_labels['problems']:line.get_raised_problems_string()})
             tmp_out.update({self.et_labels['coder']:line.coder})
 
             output_list.append(tmp_out)
