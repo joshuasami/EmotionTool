@@ -225,6 +225,24 @@ class DataFrame:
 
         return iter(self.df)
 
+    def get_problems_count(self) -> dict[int]:
+
+        out = {}
+        out['total'] = 0
+        out['lines_with_problems'] = 0
+
+        for line in self.iterate_rows():
+            out['total'] += len(line.raised_problems)
+            out['lines_with_problems'] += 1 if len(line.raised_problems) > 0 else 0
+            for problem in line.raised_problems:
+                if problem in out:
+                    out[problem] += 1
+                else:
+                    out[problem] = 1
+
+        return out
+
+
 class Wordlist:
     '''This class stores the three wordlists'''
 

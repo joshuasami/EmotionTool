@@ -10,6 +10,10 @@ class UserInterface:
         '''Displays a message to the user'''
         print(message)
 
+    def print_empty_line(self, n: int = 1):
+        '''Prints an empty line'''
+        print("\n" * n)
+
     def get_input(self,prompt):
         '''Asks the user for input and returns it'''
         return input(prompt)

@@ -27,7 +27,15 @@ class EmotionTool:
 
         self.coder = coder
 
-    def check_df(self, automatic_labeling: bool) -> None:
+        self.problem_dict = {
+            "0":"Match in a marked column",
+            "1":"No reduction found",
+            "2":"More than one Emotion found",
+            "3":"No Emotions were found",
+            "4":"More than one Negation found" 
+            }
+
+    def check_df(self) -> None:
         '''This function checks the whole dataframe'''
         
         if self.et is None:
@@ -38,13 +46,28 @@ class EmotionTool:
         self.automatic_labeling()
         self.df.save_df()
 
+        # printing the problems, which were found in the dataframe
+        problem_count = self.df.get_problems_count()
+        self.ui.display_message(f"{problem_count.pop('total')} problems were found in {problem_count.pop('lines_with_problems')} lines in the dataframe")
+        for problems, count in problem_count.items():
+            self.ui.display_message(f"{self.problem_dict[problems]}: {count}")
+        
+        self.ui.print_empty_line()
 
+        # asking the user, if they want to label the list whole list at once or line by line
+        checker = ""
+        decision_map = {"0": True, "1": False}
+        while checker not in decision_map:
+            self.ui.display_message("You have to Options:\n[0] ET can label the list completely for you\n[1] or you go through every line, where isn't a emotion word yet and you can label it by yourself. ET is still helping you with labeling")
+            checker = self.ui.get_input("What do you want to do?")
+
+        automatic_labeling_decision = decision_map.get(checker, False)
         
         # if automatic labeling is false, use the self.check_line function to label the data.
         # This means that the user can label the data manually
-        if automatic_labeling:
+        if automatic_labeling_decision:
             return None
-            
+        
         # the continue_labeling variable is used to determine if the user wants to continue labeling
         continue_labeling = True
 
@@ -174,14 +197,8 @@ class EmotionTool:
         # 2 = over 1
         # 3 = 0 matches
         # 4 = more than one negations found
-        problem_dict = {
-            "0":"Match in a marked column",
-            "1":"No reduction found",
-            "2":"More than one Emotion found",
-            "3":"No Emotions were found",
-            "4":"More than one Negation found" 
-            }
-        self.ui.display_message(f"Problems found: {', '.join([problem_dict[p] for p in line.raised_problems])}")
+        
+        self.ui.display_message(f"Problems found: {', '.join([self.problem_dict[p] for p in line.raised_problems])}")
 
         self.ui.display_message("")
 

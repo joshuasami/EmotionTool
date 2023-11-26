@@ -36,17 +36,9 @@ def main():
     # creating EmotionTool instance
     emotion_tool = EmotionTool(ui=ui, df=df, et=et,coder=CODER, labels_to_show=LABELS_TO_SHOW, valence_pairs=VALENCE_PAIRS, no_emotion_found_label=NO_EMOTION_FOUND_LABEL)
 
-    # asking the user, if they want to label the list whole list at once or line by line
-    checker = ""
-    decision_map = {"0": True, "1": False}
-    while checker not in decision_map:
-        ui.display_message("You have to Options:\n[0] ET can label the list completely for you\n[1] or you go through every line, where isn't a emotion word yet and you can label it by yourself. ET is still helping you with labeling")
-        checker = ui.get_input("What do you want to do?")
-
-    automatic_labeling_decision = decision_map.get(checker, False)
-
+ 
     # labeling the list
-    emotion_tool.check_df(automatic_labeling_decision)
+    emotion_tool.check_df()
 
     # good bye message
     ui.display_message("Thanks for using the EmotionTool")
