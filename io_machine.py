@@ -3,8 +3,13 @@
 import csv
 import json
 import re
+import os
+import shutil
+from datetime import datetime
+
 from functions import exit_programm
 from user_interface import UserInterface
+
 
 
 class IOMachine:
@@ -69,14 +74,48 @@ class IOMachine:
 
         return out
     
-    def save_file(self, file_url: str, output_content: list|dict, filetype: str = None, header_row: list[str] = None) -> None:
+    def save_file(self, file_url: str, output_content: list|dict, add_timestamp: bool = False, filetype: str = None, header_row: list[str] = None) -> None:
         '''General Method to call, if you want to save a file.
         The Function will call any needed functions for different file-formats.'''
-         # if no encoding was given as a parameter, the encoding is set to the class variable
+        
+         # create directory, base and extension strings
+        directory, filename = os.path.split(file_url)
+        base, ext = os.path.splitext(filename)
+
+        # create regex pattern to check if file already exists
+        pattern = re.compile(f'^{re.escape(base)}{re.escape(ext)}$')
+        
+        # Add timestamp to filename if required and change pattern accordingly
+        if add_timestamp:
+            timestamp = datetime.now().strftime("_%Y%m%d_%H%M%S")
+            filename = f"{base}{timestamp}{ext}"
+            file_url = os.path.join(directory, filename)
+            pattern = re.compile(f'^{re.escape(base)}_\\d{{8}}_\\d{{6}}{re.escape(ext)}$')
+
+        # Check if file with the same base name already exists
+        for filename in os.listdir(directory):
+            if pattern.match(filename):
+                # Create 'archiv' directory if it doesn't exist
+                archiv_path = os.path.join(directory, 'archiv')
+                if not os.path.exists(archiv_path):
+                    os.makedirs(archiv_path)
+
+                # Check if file already exists in 'archiv' directory
+                archive_path = os.path.join(archiv_path, filename)
+                if os.path.exists(archive_path):
+                    # Add as many numbers to the filename as needed to make it unique
+                    base_archive, ext_archive = os.path.splitext(archive_path)
+                    i = 1
+                    while os.path.exists(archive_path):
+                        archive_path = f"{base_archive}_{i}{ext_archive}"
+                        i += 1
+
+                # Move the existing file to the 'archiv' directory
+                shutil.move(os.path.join(directory, filename), archive_path)
 
 
         if filetype is None:
-            filetype = re.search(r'\.([^.]+)$', file_url).group(1)
+            filetype = ext[1:]
 
         if filetype == "csv":
             self.save_csv(file=file_url, output_content=output_content, header_row=header_row, encoding=self.encoding, delimiter=self.delimiter)

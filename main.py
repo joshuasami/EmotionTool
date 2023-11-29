@@ -11,13 +11,16 @@ from et_structure import Wordlist, DataFrame
 def main():
     '''Main Function'''
 
-
-    print("")
-    print(LOGO)
-    print("")
-
+    # creating the UserInterface instance
     ui = UserInterface()
+
+    # creating the IOMachine instance
     io = IOMachine(encoding=ENCODING, delimiter=SEPERATOR, ui=ui)
+
+    # print the logo
+    ui.print_empty_line()
+    ui.display_message(LOGO)
+    ui.print_empty_line()
 
     # check if something was messed up in the settings-file
     if list(ET_LABELS) != ["emotion", "reduction", "intensifier", "negation", "problems", "coder"]:
@@ -36,7 +39,6 @@ def main():
     # creating EmotionTool instance
     emotion_tool = EmotionTool(ui=ui, df=df, et=et,coder=CODER, labels_to_show=LABELS_TO_SHOW, valence_pairs=VALENCE_PAIRS, no_emotion_found_label=NO_EMOTION_FOUND_LABEL)
 
- 
     # labeling the list
     emotion_tool.check_df()
 

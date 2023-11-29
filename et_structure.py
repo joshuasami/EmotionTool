@@ -218,7 +218,7 @@ class DataFrame:
             output_list.append(tmp_out)
         
         # saving the df
-        self.io.save_file(file_url=self.output_file_url, output_content=output_list, filetype="csv", header_row=self.header_row)
+        self.io.save_file(file_url=self.output_file_url, output_content=output_list, add_timestamp=True, filetype="csv", header_row=self.header_row)
 
     def iterate_rows(self) -> Iterator[EmotionLine]:
         '''This function iterates over the rows of the df'''
