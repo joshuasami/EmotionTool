@@ -169,15 +169,15 @@ class EmotionTool:
 
         if labels_to_show is None:
             labels_to_show = self.labels_to_show
-        
-        self.ui.display_message("\n###########\n")
-
+        self.ui.print_empty_line()
+        self.ui.display_message("####################")
+        self.ui.print_empty_line()
         # prints all line, which possibly could contain an emotion word
         for label,value in line.answers.items():
 
             self.ui.display_message(str(label) + ": " + str(value))
         
-        self.ui.display_message("")
+        self.ui.print_empty_line()
 
         # prints all labels, which are in the labels_to_show list
         # if the label is not in the line, it will be skipped
@@ -188,7 +188,7 @@ class EmotionTool:
                 self.ui.display_message(l)
                 continue
 
-        self.ui.display_message("")
+        self.ui.print_empty_line()
         
         # prints all problems, which were found in the line
         # explanation of raised problem-codes
@@ -200,7 +200,7 @@ class EmotionTool:
         
         self.ui.display_message(f"Problems found: {', '.join([self.problem_dict[p] for p in line.raised_problems])}")
 
-        self.ui.display_message("")
+        self.ui.print_empty_line()
 
         # prints all matches, which were found in the line
         for col, matches in line.matches.items():
@@ -208,7 +208,7 @@ class EmotionTool:
             for match in matches:
                 self.ui.display_message(match)
 
-            self.ui.display_message("")
+            self.ui.print_empty_line()
         
     def get_ec_decision(self, line: EmotionLine) -> str:
         '''This function asks the user for the decision'''

@@ -1,5 +1,6 @@
 '''This module contains the UserInterface class'''
 
+
 class UserInterface:
     '''A class that handles any interaction with the user'''
 

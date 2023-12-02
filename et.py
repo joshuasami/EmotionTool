@@ -1,19 +1,16 @@
 '''This module contains the ET class, which is used to analyze sentences for emotion terms.'''
 
 import re
-from et_structure import EmotionLine
-from et_structure import Wordlist, EmotionWord
+from et_structure import EmotionLine, Wordlist, EmotionWord
 
 class ET:
     '''ET can, equipt with an emotion, modifier and reduction list, analyze sentences for emotion terms '''
 
-    def __init__(self, wordlist: Wordlist, answer_columns: list = None, labels_raising_problem: list = None) -> None:
+    def __init__(self, wordlist: Wordlist, valence_pairs: dict[str], labels_raising_problem: list[str] = None) -> None:
         
         self.wordlist = wordlist
 
-        if answer_columns is None:
-            answer_columns = []
-        self.answer_columns = answer_columns
+        self.valence_pairs = valence_pairs
 
         if labels_raising_problem is None:
             labels_raising_problem = []
@@ -211,12 +208,10 @@ class ET:
             # if there was a negation found, the reduction is set to the opposite of the reduction connected to the found emotion
         
             if len(found_negation) == 1:
-                if self.wordlist.get_valence(found_emotion) == "negativ":
-                    found_reduction = 'positiv'
-                elif self.wordlist.get_valence(found_emotion) == "positiv":
-                    found_reduction = 'negativ'
-                elif self.wordlist.get_valence(found_emotion) == "neutral":
-                    found_reduction = 'neutral'
+                try:
+                    found_reduction = self.valence_pairs[self.wordlist.get_valence(found_emotion)]
+                except KeyError:
+                    found_reduction = ''
             
 
             elif len(found_negation) == 0:

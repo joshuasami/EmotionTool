@@ -15,9 +15,10 @@ from user_interface import UserInterface
 class IOMachine:
     '''Class to load and save files'''
     
-    def __init__(self, encoding: str, delimiter: str, ui: UserInterface):
+    def __init__(self, encoding: str, delimiter: str, string_seperator: str, ui: UserInterface):
         self.encoding = encoding
         self.delimiter = delimiter
+        self.string_seperator = string_seperator
         self.ui = ui
 
     def load_file(self, file: str, filetype: str = None) -> dict|list:
@@ -58,7 +59,7 @@ class IOMachine:
         try:
             # opening csv-File
             with open(file, encoding=encoding, newline='') as csvfile:
-                csv_reader = csv.DictReader(csvfile, delimiter=delimiter)
+                csv_reader = csv.DictReader((line for line in csvfile if not line.isspace()), delimiter=delimiter)
                 out = list(csv_reader)
         except Exception as error:
             self.ui.display_message(f"The csv-file {file} couldn't be loaded.")
@@ -208,3 +209,7 @@ class IOMachine:
                 self.ui.dict_dict_as_table(line)
                 self.ui.display_message("\n")
                 return None
+
+    def get_string_seperator(self) -> str:
+        '''Returns the string seperator'''
+        return self.string_seperator

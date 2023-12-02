@@ -9,7 +9,7 @@ INPUT_FILE_URL = "test-" +  "in/et_in_file.csv"
 # IMPORTANT: Please name the columns of the dictionary 'emotion', 'reduction', and 'valence'!
 EMOTION_WORDS_URL = "test-" +  "lists/words_valence.csv"
 
-# If a word has a valence on the key side of the dictionary (the word before the :), the word on the other side is used for the emotion-detection.
+# If a word has a valence on the key side of the dictionary (the word before the :), the word on the other side is used as a reduction, if there is one negation before the emotion term.
 VALENCE_PAIRS = {
     "positiv":"negativ",
     "negativ":"positiv",
@@ -61,8 +61,8 @@ WORDLIST_LABELS = {
     "emotion": "emotion",
     "reduction": "reduction",
     "valence": "valence",
-    "intensifier": "intensifiers",
-    "negation": "negations"
+    "intensifier": "intensifier",
+    "negation": "negation"
 }
 
 NO_EMOTION_FOUND_LABEL = "99"
@@ -72,6 +72,9 @@ ENCODING = "utf-8-sig"
 
 # Seperator for the csv-files
 SEPERATOR = ";"
+
+# Seperator inside of string 
+STRING_SEPERATOR = ","
 
 
 LOGO = """

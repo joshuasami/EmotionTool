@@ -4,20 +4,16 @@ from io_machine import IOMachine
 from typing import Iterator
 
 class EmotionWord:
-    def __init__(self, emotion: str, reduction: str, intensifier: str|list[str] = None, negation: str|list[str] = None, emotion_stripped: dict = None) -> None:
+    def __init__(self, emotion: str, reduction: str, intensifier: list[str] = None, negation: list[str] = None, emotion_stripped: dict = None) -> None:
         self.emotion = emotion
         self.reduction = reduction
         
         if intensifier is None:
             intensifier = []
-        elif isinstance(intensifier, str):
-            intensifier = intensifier.split()
         self.intensifier = intensifier
 
         if negation is None:
             negation = []
-        elif isinstance(negation, str):
-            negation = negation.split()
         self.negation = negation
 
         if emotion_stripped is None:
@@ -25,10 +21,10 @@ class EmotionWord:
         self.emotion_stripped = emotion_stripped
 
     def __repr__(self) -> str:
-        return f"EmotionWord(emotion={self.emotion}, reduction={self.reduction}, intensifier={self.intensifier}, negation={self.negation})"
+        return f"EmotionWord(emotion={self.emotion}, reduction={self.reduction}, intensifier={self.intensifier}, negation={self.negation}, emotion_stripped={self.emotion_stripped})"
     
     def __str__(self) -> str:
-        return f"Emotion: {self.emotion}, Reduction: {self.reduction}, Intensifier: {self.get_intensifier_string()}, Negation: {self.get_negation_string()}"
+        return f"Emotion: {self.emotion}, Reduction: {self.reduction}, Intensifier: {', '.join(self.intensifier)}, Negation: {', '.join(self.negation)}, Emotion Stripped: {self.emotion_stripped if self.emotion_stripped else 'None'}"
 
     def __eq__(self, other):
         if isinstance(other, EmotionWord):
@@ -66,12 +62,6 @@ class EmotionWord:
     
     def get_valence(self) -> str:
         return self.emotion_stripped['valence']
-
-    def get_intensifier_string(self) -> str:
-        return ', '.join(self.intensifier)
-    
-    def get_negation_string(self) -> str:
-        return ', '.join(self.negation)
     
     def set_emotion_word(self, emotion: str, reduction: str, intensifier: list[str], negation: list[str]) -> None:
         self.emotion = emotion
@@ -85,11 +75,11 @@ class EmotionWord:
 class EmotionLine:
     '''This class reprents one answer of a vignette'''
     
-    def __init__(self, answers: dict,
-                 other_columns: dict = None,
+    def __init__(self, answers: dict[str],
+                 other_columns: dict[str] = None,
                  emotion_word: EmotionWord = None,
                  matches: dict = None, 
-                 raised_problems: str|list = None,
+                 raised_problems: list[str] = None,
                  coder: str = "", ) -> None:
         
         
@@ -108,8 +98,6 @@ class EmotionLine:
         
         if raised_problems is None:
             raised_problems = []
-        elif isinstance(raised_problems, str):
-            raised_problems = [i for i in raised_problems.split()]
         self.raised_problems = raised_problems
 
         if matches is None:
@@ -121,8 +109,6 @@ class EmotionLine:
     def __repr__(self) -> str:
         return f"EmotionLine(answers={self.answers}, other_columns={self.other_columns}, emotion_word={self.emotion_word}, matches={self.matches}, raised_problems={self.raised_problems}, coder={self.coder})"
     
-    def get_raised_problems_string(self) -> list:
-        return ' '.join(self.raised_problems)
     
     def update_from_other(self, other):
         self.answers = other.answers
@@ -165,6 +151,8 @@ class DataFrame:
 
         out = []
 
+        string_seperator = self.io.get_string_seperator() + " "
+
         for row in input_file_raw:
             answers = {}
             other_columns = {}
@@ -176,7 +164,7 @@ class DataFrame:
                 if key in self.labels_to_look_through:
                     answers[key] = value
                 elif key == self.et_labels['problems']:
-                    raised_problems = value
+                    raised_problems = value.split(string_seperator)
                 elif key == self.et_labels['coder']:
                     coder = value
                 elif key == self.et_labels['emotion']:
@@ -184,9 +172,9 @@ class DataFrame:
                 elif key == self.et_labels['reduction']:
                     emotion_word['reduction'] = value
                 elif key == self.et_labels['intensifier']:
-                    emotion_word['intensifier'] = value
+                    emotion_word['intensifier'] = value.split(string_seperator)
                 elif key == self.et_labels['negation']:
-                    emotion_word['negation'] = value
+                    emotion_word['negation'] = value.split(string_seperator)
                 else:
                     other_columns[key] = value
 
@@ -202,6 +190,7 @@ class DataFrame:
         '''This function saves the df to the csv-file'''
 
         output_list = []
+        string_seperator = self.io.get_string_seperator() + " "
 
         for line in self.df:
             tmp_out = {}
@@ -210,9 +199,9 @@ class DataFrame:
             tmp_out.update(line.other_columns)
             tmp_out.update({self.et_labels['emotion']:line.emotion_word.get_emotion()})
             tmp_out.update({self.et_labels['reduction']:line.emotion_word.get_reduction()})
-            tmp_out.update({self.et_labels['intensifier']:line.emotion_word.get_intensifier_string()})
-            tmp_out.update({self.et_labels['negation']:line.emotion_word.get_negation_string()})
-            tmp_out.update({self.et_labels['problems']:line.get_raised_problems_string()})
+            tmp_out.update({self.et_labels['intensifier']:string_seperator.join(line.emotion_word.get_intensifier())})
+            tmp_out.update({self.et_labels['negation']:string_seperator.join(line.emotion_word.get_negation())})
+            tmp_out.update({self.et_labels['problems']:string_seperator.join(line.raised_problems)})
             tmp_out.update({self.et_labels['coder']:line.coder})
 
             output_list.append(tmp_out)
@@ -242,13 +231,14 @@ class DataFrame:
 
         return out
 
-
 class Wordlist:
     '''This class stores the three wordlists'''
 
-    def __init__(self, io: IOMachine, emotions_dict_url: str, intensifier_dict_url: str, negations_dict_url: str) -> None:
+    def __init__(self, io: IOMachine, wordlist_labels: dict[str], emotions_dict_url: str, intensifier_dict_url: str, negations_dict_url: str) -> None:
         
         self.io = io
+
+        self.wordlist_labels = wordlist_labels
 
         self.emotion_dict = {}
         self.negations = []
@@ -326,8 +316,10 @@ class Wordlist:
             out = {}
 
             for row in emotion_dict_raw:
-                emotion = row.pop('emotion')
-                out[emotion] = row
+                emotion = row[self.wordlist_labels['emotion']]
+                reduction = row[self.wordlist_labels['reduction']]
+                valence = row[self.wordlist_labels['valence']]
+                out[emotion] = {'reduction': reduction, 'valence': valence}
 
             self.emotion_dict = out
 
@@ -371,8 +363,9 @@ class Wordlist:
         out = []
 
         for key,value in self.emotion_dict.items():
-            tmp_out = {'emotion':key}
-            tmp_out.update(value)
+            tmp_out = {self.wordlist_labels['emotion']:key}
+            for k,v in value.items():
+                tmp_out.update({self.wordlist_labels[k]:v})
             out.append(tmp_out)
 
         self.io.save_file(file_url=self.emotion_dict_url, output_content=out)
@@ -383,7 +376,7 @@ class Wordlist:
         out = []
 
         for negation in self.negations:
-            out.append({'negation':negation})
+            out.append({self.wordlist_labels['negation']:negation})
 
         self.io.save_file(file_url=self.negations_dict_url, output_content=out)
 
@@ -393,7 +386,7 @@ class Wordlist:
         out = []
 
         for intensifier in self.intensifiers:
-            out.append({'intensifier':intensifier})
+            out.append({self.wordlist_labels['intensifier']:intensifier})
 
         self.io.save_file(file_url=self.intensifier_dict_url, output_content=out)
 

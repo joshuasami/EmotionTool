@@ -1,7 +1,7 @@
 '''This is the main file of the EmotionTool. It is the only file you have to run to use the EmotionTool.'''
 
 from functions import exit_programm
-from settings import ET_LABELS, OUTPUT_FILE_URL, INPUT_FILE_URL, ENCODING, SEPERATOR, EMOTION_WORDS_URL, NEGATIONS_URL, INTENSIFIER_URL, LABELS_RAISING_PROBLEMS, CODER, LABELS_TO_LOOK_THROUGH, LABELS_TO_SHOW, VALENCE_PAIRS, LOGO, NO_EMOTION_FOUND_LABEL
+from settings import ET_LABELS, OUTPUT_FILE_URL, INPUT_FILE_URL, ENCODING, SEPERATOR, EMOTION_WORDS_URL, NEGATIONS_URL, INTENSIFIER_URL, LABELS_RAISING_PROBLEMS, CODER, LABELS_TO_LOOK_THROUGH, LABELS_TO_SHOW, VALENCE_PAIRS, LOGO, NO_EMOTION_FOUND_LABEL, WORDLIST_LABELS, STRING_SEPERATOR
 from io_machine import IOMachine
 from et import ET
 from emotion_tool import EmotionTool
@@ -15,7 +15,7 @@ def main():
     ui = UserInterface()
 
     # creating the IOMachine instance
-    io = IOMachine(encoding=ENCODING, delimiter=SEPERATOR, ui=ui)
+    io = IOMachine(encoding=ENCODING, delimiter=SEPERATOR, string_seperator=STRING_SEPERATOR, ui=ui)
 
     # print the logo
     ui.print_empty_line()
@@ -28,10 +28,10 @@ def main():
         exit_programm()
 
     # loading wordlist
-    wordlist = Wordlist(io=io, emotions_dict_url=EMOTION_WORDS_URL, intensifier_dict_url=INTENSIFIER_URL, negations_dict_url=NEGATIONS_URL)
+    wordlist = Wordlist(io=io, wordlist_labels=WORDLIST_LABELS, emotions_dict_url=EMOTION_WORDS_URL, intensifier_dict_url=INTENSIFIER_URL, negations_dict_url=NEGATIONS_URL)
 
     # creating ET
-    et = ET(wordlist=wordlist, answer_columns=LABELS_TO_LOOK_THROUGH, labels_raising_problem=LABELS_RAISING_PROBLEMS)
+    et = ET(wordlist=wordlist, valence_pairs=VALENCE_PAIRS, labels_raising_problem=LABELS_RAISING_PROBLEMS)
 
     # Creating the DataFrame instance. It automatically loads the input file and converts it into a list of EmotionLines
     df = DataFrame(input_file_url=INPUT_FILE_URL, output_file_url=OUTPUT_FILE_URL, io=io, labels_to_look_through=LABELS_TO_LOOK_THROUGH, et_labels=ET_LABELS)
@@ -44,6 +44,7 @@ def main():
 
     # good bye message
     ui.display_message("Thanks for using the EmotionTool")
+
 
 if __name__ == "__main__":
     main()
