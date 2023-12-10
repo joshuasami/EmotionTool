@@ -224,6 +224,9 @@ class EmotionTool:
         # creates a list of all matches
         matches_as_list = [item for sublist in line.matches.values() for item in sublist]
 
+        # removes duplicates from the list
+        matches_as_list = list(dict.fromkeys(matches_as_list))
+
         # prints all matches, which were found in the line. We add 4 to the index, because the first 3 options are already taken
         for index in range(4, len(matches_as_list)+ 4):
             self.ui.display_message("[" + str(index) + "] - " + matches_as_list[index-4].get_emotion())
@@ -321,7 +324,7 @@ class EmotionTool:
                 # Stripped-Reduction-Input
                 input_stripped_reduction = self.get_input('Stripped Reduction')
                 # Valenz-Input
-                input_valence = self.get_input('Valence')
+                input_valence = self.get_input('Valence', allowed_inputs=self.valence_pairs.keys())
 
                 line.emotion_word.set_emotion_stripped(emotion=input_stripped_emotion, 
                                                        reduction=input_stripped_reduction, 
@@ -346,8 +349,11 @@ class EmotionTool:
 
         return line
 
-    def get_input(self, cat_displayed: str) -> str:
+    def get_input(self, cat_displayed: str, allowed_inputs: list[str] = None) -> str:
         '''This function asks the user for an input to a given category'''
+
+        if allowed_inputs is None:
+            allowed_inputs = []
 
         # the checker variable is used to determine if the user input is valid
         checker = ""
@@ -356,6 +362,11 @@ class EmotionTool:
             
             user_input = self.ui.get_input(cat_displayed + ": ")
             self.ui.display_message("Your Input: " + user_input)
+
+            if allowed_inputs and user_input not in allowed_inputs:
+                self.ui.display_message("Your Input is not in the allowed inputs")
+                self.ui.display_message("Allowed Inputs: " + ", ".join(allowed_inputs))
+                continue
             
             while checker not in ["0", "1"]:
                 checker = self.ui.get_input("Is this correct? (0 = No, 1 = Yes)")
@@ -367,6 +378,10 @@ class EmotionTool:
                     user_input = self.ui.get_input(cat_displayed + ": ")
                     self.ui.display_message("Your Input: " + user_input)
                     checker = ""
+                    if allowed_inputs and user_input not in allowed_inputs:
+                        self.ui.display_message("Your Input is not in the allowed inputs")
+                        self.ui.display_message("Allowed Inputs: " + ", ".join(allowed_inputs))
+                        break
                 elif checker == "1":
                     continue_loop = False
                     break

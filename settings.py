@@ -3,7 +3,7 @@
 # IMPORT: Don't save the words, which are written in capital-letters. These are variable-names and changing them will result in an error and break the program!
 
 # Filepath of the input-file
-INPUT_FILE_URL = "test-" +  "in/et_in_file.csv"
+INPUT_FILE_URL = "in/test_05122023.csv"
 
 # Filepath of the Emotion-Dictinary
 # IMPORTANT: Please name the columns of the dictionary 'emotion', 'reduction', and 'valence'!

@@ -122,10 +122,9 @@ class ET:
         '''This function is the main method of ET
         if presented with a sentence in string format, it analyzes it for used emotions and its connected intensifiers and negations'''
         
-
-
-        # the input line is converted into a list of words
+        # the input line is converted into a list of words and empty list for the rest of the line is created
         line = self.str2list(line)
+        line_rest = []
         
         # exits, if the line is empty
         if not line:
@@ -143,78 +142,41 @@ class ET:
             found_reduction = ""
             found_intensifier = []
             found_negation = []
+            found_post_intensifier = []
+            found_post_negation = []
+
 
             line, found_emotion = self.get_longest_match(line, self.wordlist.get_emotions())
-            
             if found_emotion == "":
+                line_rest.insert(0,line[-1])
                 line = line[:-1]
                 continue
-            
+
             # here happens the same for intensifiers, what already happend for the emotion terms
             # it works almost the same. the only difference is, that there can be multiple intensifiers in a row
             # e.g. "sehr sehr sehr"
-            matches_tmp = []
+            line, found_intensifier = self.find_matches(line, self.wordlist.get_intensifiers())
+            line, found_negation = self.find_matches(line, self.wordlist.get_negations())
 
-            while len(line)>0:
-
-                line, found_intensifier_tmp = self.get_longest_match(line, self.wordlist.get_intensifiers())
-                if found_intensifier_tmp == "":
-                    break
-                else:
-                    matches_tmp.insert(0,found_intensifier_tmp)
-
-            found_intensifier = matches_tmp
-            
-            matches_tmp = []
+            line_rest, found_post_negation = self.find_matches(line_rest, self.wordlist.get_negations(), start_from_beginning=True)
+            line_rest, found_post_intensifier = self.find_matches(line_rest, self.wordlist.get_intensifiers(), start_from_beginning=True)
             split_emotion = self.str2list(found_emotion)
+            split_emotion, extra_found_intensifier = self.find_matches(split_emotion, self.wordlist.get_intensifiers(), remove_unmatched=True)
 
-            while len(split_emotion) > 0:
-                split_emotion, found_intensifier_tmp = self.get_longest_match(split_emotion, self.wordlist.get_intensifiers())
-                if found_intensifier_tmp == "":
-                    split_emotion = split_emotion[:-1]
-                    continue
-                else:
-                    matches_tmp.insert(0,found_intensifier_tmp)
-            
-            extra_found_intensifier = matches_tmp
-
-            # here happens the same for negations, like for intensifiers. it's working in an identical-way
-            
-            matches_tmp = []
-
-            while len(line)>0:
-                    
-                line, found_negation_tmp = self.get_longest_match(line, self.wordlist.get_negations())
-                if found_negation_tmp == "":
-                    break
-                else:
-                    matches_tmp.insert(0,found_negation_tmp)
-
-            found_negation = matches_tmp
-
-            matches_tmp = []
             split_emotion = self.str2list(found_emotion)
-            while len(split_emotion) > 0:
-                split_emotion, found_negation_tmp = self.get_longest_match(split_emotion, self.wordlist.get_negations())
-                if found_negation_tmp == "":
-                    split_emotion = split_emotion[:-1]
-                    continue
-                else:
-                    matches_tmp.insert(0,found_negation_tmp)
-
-            extra_found_negation = matches_tmp
+            split_emotion, extra_found_negation = self.find_matches(split_emotion, self.wordlist.get_negations(), remove_unmatched=True)
             
             
             # if there was a negation found, the reduction is set to the opposite of the reduction connected to the found emotion
         
-            if len(found_negation) == 1:
+            if len(found_negation) + len(found_post_negation) == 1:
                 try:
                     found_reduction = self.valence_pairs[self.wordlist.get_valence(found_emotion)]
                 except KeyError:
                     found_reduction = ''
             
 
-            elif len(found_negation) == 0:
+            elif len(found_negation) + len(found_post_negation) == 0:
                 # the reduction connected to the found emotion is saved
                 found_reduction = self.wordlist.get_reduction(found_emotion)
 
@@ -222,13 +184,19 @@ class ET:
                 found_reduction = ''
 
             
-            found_emotion = ' '.join(found_negation + found_intensifier + [found_emotion])
+            found_emotion = ' '.join(found_negation + found_intensifier + [found_emotion] + found_post_negation + found_post_intensifier)
             
             if extra_found_intensifier:
                 found_intensifier = extra_found_intensifier + found_intensifier
 
             if extra_found_negation:
                 found_negation = extra_found_negation + found_negation
+
+            if found_post_intensifier:
+                found_intensifier = found_intensifier + found_post_intensifier
+
+            if found_post_negation:
+                found_negation = found_negation + found_post_negation
 
             # the found emotion, reduction, intensifier and negation are saved in a dict and appended to the output list
             out.append(
@@ -238,9 +206,27 @@ class ET:
                             negation=found_negation
                             )
             )
+            
         return out
-
-    def get_longest_match(self, line: str, wordlist: list) -> (str,str):
+    
+    def find_matches(self, line, wordlist, remove_unmatched=False, start_from_beginning=False):
+        # Initialize an empty list to store the matches
+        matches_tmp = []
+        while len(line) > 0:
+            line, found_tmp = self.get_longest_match(line, wordlist, start_from_beginning)
+            
+            if found_tmp == "":
+                if remove_unmatched:
+                    line = line[1:] if start_from_beginning else line[:-1]
+                    continue
+                else:
+                    
+                    break
+            else:
+                matches_tmp.append(found_tmp) if start_from_beginning else matches_tmp.insert(0, found_tmp)
+        return line, matches_tmp
+    
+    def get_longest_match(self, line: list[str], wordlist: list, start_from_beginning=False) -> (list[str],str):
         '''This function is used to find the longest match of a wordlist in a line'''
 
         # all entries in the emotion wordlist are looked for in the input line
@@ -252,9 +238,12 @@ class ET:
             # the emotion is converted into a list of words
             split_entry = self.str2list(entry)
             try:
-                # if the last words of the input line are the same as the emotion, the emotion is saved
-                if line[-len(split_entry):len(line)] == split_entry:
-                    matches[entry] = split_entry
+                if start_from_beginning:
+                    if line[:len(split_entry)] == split_entry:
+                        matches[entry] = split_entry
+                else:
+                    if line[-len(split_entry):] == split_entry:
+                        matches[entry] = split_entry
             except IndexError:
                 continue
         
@@ -266,7 +255,7 @@ class ET:
         # there can be multiple matches, because one entrie can be part of another
         # e.g. "Lust" and "keine Lust" can both be found. But because we check for the longest match, only "keine Lust" is used
         longest_value = ''
-        key_with_longest_value = None
+        key_with_longest_value = ''
 
         for key_match, split_match in matches.items():
             if len(split_match) > len(longest_value):
@@ -276,7 +265,10 @@ class ET:
         out = key_with_longest_value
 
         # the found emotion is deleted from the inputline-list
-        line = line[:-len(longest_value)]
+        if start_from_beginning:
+            line = line[len(longest_value):]
+        else:
+            line = line[:-len(longest_value)]
 
         return line, out
 

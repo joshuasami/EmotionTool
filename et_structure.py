@@ -24,7 +24,11 @@ class EmotionWord:
         return f"EmotionWord(emotion={self.emotion}, reduction={self.reduction}, intensifier={self.intensifier}, negation={self.negation}, emotion_stripped={self.emotion_stripped})"
     
     def __str__(self) -> str:
-        return f"Emotion: {self.emotion}, Reduction: {self.reduction}, Intensifier: {', '.join(self.intensifier)}, Negation: {', '.join(self.negation)}, Emotion Stripped: {self.emotion_stripped if self.emotion_stripped else 'None'}"
+        return f"Emotion: {self.emotion}, Reduction: {self.reduction}, Intensifier: {', '.join(self.intensifier)}, Negation: {', '.join(self.negation)}"
+
+    def __hash__(self) -> int:
+        return hash((self.emotion, self.reduction, tuple(self.intensifier), tuple(self.negation)))
+        
 
     def __eq__(self, other):
         if isinstance(other, EmotionWord):
