@@ -1,6 +1,5 @@
 '''This is the Main Class, kind of like the controll center of the program. It is used to label the data with the help of ET'''
 
-from functions import exit_programm
 from et import ET
 from et_structure import EmotionLine, DataFrame, EmotionWord
 from user_interface import UserInterface
@@ -40,7 +39,7 @@ class EmotionTool:
         
         if self.et is None:
             self.ui.display_message("There is no instance of ET or another labelling machine loaded")
-            exit_programm()
+            return None
         
         # the dataframe is labeled by ET automaticly once
         self.automatic_labeling()

@@ -6,8 +6,8 @@ import re
 import os
 import shutil
 from datetime import datetime
+import sys
 
-from functions import exit_programm
 from user_interface import UserInterface
 
 
@@ -36,7 +36,7 @@ class IOMachine:
         
         else:
             self.ui.display_message(f"The filetype .{filetype} is not supported yet")
-            exit_programm()
+            sys.exit(0)
 
     def load_json(self, file: str, encoding: str) -> dict:
         '''Method to load Json-Files'''
@@ -48,7 +48,7 @@ class IOMachine:
         except Exception as error:
             self.ui.display_message(f"The json-file {file} couldn't be loaded.")
             self.ui.display_message(error)
-            exit_programm()
+            sys.exit(0)
         return out
     
     def load_csv(self, file: str, encoding: str, delimiter: str) -> list:
@@ -64,11 +64,11 @@ class IOMachine:
         except Exception as error:
             self.ui.display_message(f"The csv-file {file} couldn't be loaded.")
             self.ui.display_message(error)
-            exit_programm()
+            sys.exit(0)
         
         if not self.check_dicts(out):
             self.ui.display_message(f"The csv-file {file} has an inhomogeneous table structure.")
-            exit_programm()
+            sys.exit(0)
 
 
         self.check_special_letters(raw_file=out, raw_file_name=file)
@@ -126,7 +126,7 @@ class IOMachine:
         
         else:
             self.ui.display_message(f"The filetype .{filetype} is not supported yet")
-            exit_programm()
+            sys.exit(0)
     
     def save_json(self, file: str, output_content: dict, encoding: str) -> None:
         '''Method to save Json-Files'''
@@ -137,7 +137,7 @@ class IOMachine:
         except Exception as error:
             self.ui.display_message(f"The json-file {file} couldn't be saved.")
             self.ui.display_message(error)
-            exit_programm()
+            sys.exit(0)
     
     def save_csv(self, file: str, output_content: list, header_row: list, encoding: str, delimiter: str) -> None:
 
@@ -155,7 +155,7 @@ class IOMachine:
         except Exception as error:
             self.ui.display_message(f"The csv-file {file} couldn't be saved.")
             self.ui.display_message(error)
-            exit_programm()
+            sys.exit(0)
 
     def get_csv_header(self, file: str) -> list:
         '''Method to get the header row of a csv file'''
@@ -168,7 +168,7 @@ class IOMachine:
         except Exception as error:
             self.ui.display_message(f"The csv-file {file} couldn't be loaded.")
             self.ui.display_message(error)
-            exit_programm()
+            sys.exit(0)
             
         return header_row
     
