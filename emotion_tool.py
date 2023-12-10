@@ -124,7 +124,7 @@ class EmotionTool:
         
         new_words_added = False
 
-        # if the line was labeled, we have to check if the emotion word, intensifier, or negatation are already in the et, if not, we add them
+        # if the line was labeled, we have to check if the emotion word, modifier, or negatation are already in the et, if not, we add them
         if line.emotion_word != {}:
             if line.emotion_word.exists_stripped():
                 if not self.et.wordlist.is_emotion(line.emotion_word.get_stripped_emotion()):
@@ -133,9 +133,9 @@ class EmotionTool:
                                                  valence=line.emotion_word.get_valence())
                     new_words_added = True
 
-            for intensifier in line.emotion_word.get_intensifier():
-                if not self.et.wordlist.is_intensifier(intensifier):
-                    self.et.wordlist.add_intensifier(intensifier)
+            for modifier in line.emotion_word.get_modifier():
+                if not self.et.wordlist.is_modifier(modifier):
+                    self.et.wordlist.add_modifier(modifier)
                     new_words_added = True
             
             for negation in line.emotion_word.get_negation():
@@ -246,7 +246,7 @@ class EmotionTool:
         # if the input is 3, we set the emotion word to 99 (no emotion word found)
         if eingabe == 3:
 
-            line.emotion_word = EmotionWord(emotion=self.no_emotion_found_label, reduction=self.no_emotion_found_label, intensifier=[], negation=[])
+            line.emotion_word = EmotionWord(emotion=self.no_emotion_found_label, reduction=self.no_emotion_found_label, modifier=[], negation=[])
 
         # if the input is 1, we return the line without changing it
         elif eingabe == 1:
@@ -261,17 +261,17 @@ class EmotionTool:
             # Reduction-Input
             input_reduction = self.get_input('Reduction')
 
-            # Intensifier-Input
-            input_intensifiers = []
+            # Modifier-Input
+            input_modifiers = []
             continue_loop = True
             while continue_loop:
-                intensifier_input = self.get_input('Intensifier')
-                input_intensifiers.append(intensifier_input)
+                modifier_input = self.get_input('Modifier')
+                input_modifiers.append(modifier_input)
                 
-                if intensifier_input != "":
+                if modifier_input != "":
                     checker = ""
                     while checker not in ["0", "1"]:
-                        checker = input("Do you want to add another intensifier? [0] No [1] Yes")
+                        checker = input("Do you want to add another modifier? [0] No [1] Yes")
 
                         if checker not in ["0", "1"]:
                             print("Please choose 0 or 1")
@@ -282,7 +282,7 @@ class EmotionTool:
                         elif checker == "1":
                             continue_loop = True
                             checker = ""
-                            input_intensifiers.append(self.get_input('Intensifier'))
+                            input_modifiers.append(self.get_input('Modifier'))
                 else:
                     continue_loop = False
 
@@ -314,7 +314,7 @@ class EmotionTool:
 
             line.emotion_word = EmotionWord(emotion=input_emotion, 
                                             reduction=input_reduction, 
-                                            intensifier=input_intensifiers, 
+                                            modifier=input_modifiers, 
                                             negation=input_negations)
             
             # Stripped-Emotion-Input
@@ -340,7 +340,7 @@ class EmotionTool:
             matches_as_list = [item for sublist in line.matches.values() for item in sublist]
             line.emotion_word = EmotionWord(emotion=matches_as_list[eingabe-4].get_emotion(), 
                                             reduction=matches_as_list[eingabe-4].get_reduction(), 
-                                            intensifier=matches_as_list[eingabe-4].get_intensifier(), 
+                                            modifier=matches_as_list[eingabe-4].get_modifier(), 
                                             negation=matches_as_list[eingabe-4].get_negation())
             
         # setting the coder to the coder from the class 

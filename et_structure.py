@@ -4,13 +4,13 @@ from io_machine import IOMachine
 from typing import Iterator
 
 class EmotionWord:
-    def __init__(self, emotion: str, reduction: str, intensifier: list[str] = None, negation: list[str] = None, emotion_stripped: dict = None) -> None:
+    def __init__(self, emotion: str, reduction: str, modifier: list[str] = None, negation: list[str] = None, emotion_stripped: dict = None) -> None:
         self.emotion = emotion
         self.reduction = reduction
         
-        if intensifier is None:
-            intensifier = []
-        self.intensifier = intensifier
+        if modifier is None:
+            modifier = []
+        self.modifier = modifier
 
         if negation is None:
             negation = []
@@ -21,20 +21,20 @@ class EmotionWord:
         self.emotion_stripped = emotion_stripped
 
     def __repr__(self) -> str:
-        return f"EmotionWord(emotion={self.emotion}, reduction={self.reduction}, intensifier={self.intensifier}, negation={self.negation}, emotion_stripped={self.emotion_stripped})"
+        return f"EmotionWord(emotion={self.emotion}, reduction={self.reduction}, modifier={self.modifier}, negation={self.negation}, emotion_stripped={self.emotion_stripped})"
     
     def __str__(self) -> str:
-        return f"Emotion: {self.emotion}, Reduction: {self.reduction}, Intensifier: {', '.join(self.intensifier)}, Negation: {', '.join(self.negation)}"
+        return f"Emotion: {self.emotion}, Reduction: {self.reduction}, Modifier: {', '.join(self.modifier)}, Negation: {', '.join(self.negation)}"
 
     def __hash__(self) -> int:
-        return hash((self.emotion, self.reduction, tuple(self.intensifier), tuple(self.negation)))
+        return hash((self.emotion, self.reduction, tuple(self.modifier), tuple(self.negation)))
         
 
     def __eq__(self, other):
         if isinstance(other, EmotionWord):
             return (self.emotion == other.emotion and
                     self.reduction == other.reduction and
-                    self.intensifier == other.intensifier and
+                    self.modifier == other.modifier and
                     self.negation == other.negation)
         return False
     
@@ -46,8 +46,8 @@ class EmotionWord:
         '''This function returns the reduction'''
         return self.reduction
     
-    def get_intensifier(self) -> list[str]:
-        return self.intensifier
+    def get_modifier(self) -> list[str]:
+        return self.modifier
     
     def get_negation(self) -> list[str]:
         return self.negation
@@ -67,10 +67,10 @@ class EmotionWord:
     def get_valence(self) -> str:
         return self.emotion_stripped['valence']
     
-    def set_emotion_word(self, emotion: str, reduction: str, intensifier: list[str], negation: list[str]) -> None:
+    def set_emotion_word(self, emotion: str, reduction: str, modifier: list[str], negation: list[str]) -> None:
         self.emotion = emotion
         self.reduction = reduction
-        self.intensifier = intensifier
+        self.modifier = modifier
         self.negation = negation
     
     def exists_stripped(self) -> bool:
@@ -160,7 +160,7 @@ class DataFrame:
         for row in input_file_raw:
             answers = {}
             other_columns = {}
-            emotion_word = {'emotion':'', 'reduction':'', 'intensifier':'', 'negation':''}
+            emotion_word = {'emotion':'', 'reduction':'', 'modifier':'', 'negation':''}
             raised_problems = []
             coder = ""
 
@@ -175,8 +175,8 @@ class DataFrame:
                     emotion_word['emotion'] = value
                 elif key == self.et_labels['reduction']:
                     emotion_word['reduction'] = value
-                elif key == self.et_labels['intensifier']:
-                    emotion_word['intensifier'] = value.split(string_seperator)
+                elif key == self.et_labels['modifier']:
+                    emotion_word['modifier'] = value.split(string_seperator)
                 elif key == self.et_labels['negation']:
                     emotion_word['negation'] = value.split(string_seperator)
                 else:
@@ -184,7 +184,7 @@ class DataFrame:
 
             out.append(EmotionLine(answers=answers, 
                                 other_columns=other_columns, 
-                                emotion_word=EmotionWord(emotion=emotion_word['emotion'], reduction=emotion_word['reduction'], intensifier=emotion_word['intensifier'], negation=emotion_word['negation']),
+                                emotion_word=EmotionWord(emotion=emotion_word['emotion'], reduction=emotion_word['reduction'], modifier=emotion_word['modifier'], negation=emotion_word['negation']),
                                 coder=coder,
                                 raised_problems=raised_problems))
 
@@ -203,7 +203,7 @@ class DataFrame:
             tmp_out.update(line.other_columns)
             tmp_out.update({self.et_labels['emotion']:line.emotion_word.get_emotion()})
             tmp_out.update({self.et_labels['reduction']:line.emotion_word.get_reduction()})
-            tmp_out.update({self.et_labels['intensifier']:string_seperator.join(line.emotion_word.get_intensifier())})
+            tmp_out.update({self.et_labels['modifier']:string_seperator.join(line.emotion_word.get_modifier())})
             tmp_out.update({self.et_labels['negation']:string_seperator.join(line.emotion_word.get_negation())})
             tmp_out.update({self.et_labels['problems']:string_seperator.join(line.raised_problems)})
             tmp_out.update({self.et_labels['coder']:line.coder})
@@ -238,7 +238,7 @@ class DataFrame:
 class Wordlist:
     '''This class stores the three wordlists'''
 
-    def __init__(self, io: IOMachine, wordlist_labels: dict[str], emotions_dict_url: str, intensifier_dict_url: str, negations_dict_url: str) -> None:
+    def __init__(self, io: IOMachine, wordlist_labels: dict[str], emotions_dict_url: str, modifier_dict_url: str, negations_dict_url: str) -> None:
         
         self.io = io
 
@@ -246,13 +246,13 @@ class Wordlist:
 
         self.emotion_dict = {}
         self.negations = []
-        self.intensifiers = []
+        self.modifiers = []
 
         self.emotion_dict_url = emotions_dict_url
         self.load_emotion_dict(self.emotion_dict_url)
 
-        self.intensifier_dict_url = intensifier_dict_url
-        self.load_intensifiers(self.intensifier_dict_url)
+        self.modifier_dict_url = modifier_dict_url
+        self.load_modifiers(self.modifier_dict_url)
 
         self.negations_dict_url = negations_dict_url
         self.load_negations(self.negations_dict_url)
@@ -267,10 +267,10 @@ class Wordlist:
 
         return self.negations
     
-    def get_intensifiers(self) -> list:
-        '''This function returns all intensifiers'''
+    def get_modifiers(self) -> list:
+        '''This function returns all modifiers'''
 
-        return self.intensifiers
+        return self.modifiers
 
     def is_emotion(self, word: str) -> bool:
        '''This function checks if a word is an emotion. For this it looks into the emotion_dict'''
@@ -282,10 +282,10 @@ class Wordlist:
 
         return word in self.negations
         
-    def is_intensifier(self, word: str) -> bool:
-        '''This function checks if a word is an intensifier. For this it looks into the intensifiers-list'''
+    def is_modifier(self, word: str) -> bool:
+        '''This function checks if a word is an modifier. For this it looks into the modifiers-list'''
         
-        return word in self.intensifiers
+        return word in self.modifiers
         
     def get_reduction(self, word: str) -> str:
         '''This function returns the reduction of an emotion. For this it looks into the emotion_dict'''
@@ -307,10 +307,10 @@ class Wordlist:
 
         self.negations.append(negation)
     
-    def add_intensifier(self, intensifier: str) -> None:
-        '''This function adds an intensifier to the intensifiers-list'''
+    def add_modifier(self, modifier: str) -> None:
+        '''This function adds an modifier to the modifiers-list'''
 
-        self.intensifiers.append(intensifier)
+        self.modifiers.append(modifier)
 
     def load_emotion_dict(self, emotion_dict_url: str) -> bool:
         '''This function converts the input dict into a list for a single word list'''
@@ -339,11 +339,11 @@ class Wordlist:
         except:
             return False
 
-    def load_intensifiers(self, intensifier_dict_url: str) -> bool:
+    def load_modifiers(self, modifier_dict_url: str) -> bool:
         '''This function converts the input dict into a list for a single word list'''
         
         try:
-            self.intensifiers = self.load_single_list(intensifier_dict_url)
+            self.modifiers = self.load_single_list(modifier_dict_url)
             return True
         except:
             return False
@@ -384,19 +384,19 @@ class Wordlist:
 
         self.io.save_file(file_url=self.negations_dict_url, output_content=out)
 
-    def save_intensifiers(self) -> None:
+    def save_modifiers(self) -> None:
         '''This function converts the input dict into a list for a single word list'''
         
         out = []
 
-        for intensifier in self.intensifiers:
-            out.append({self.wordlist_labels['intensifier']:intensifier})
+        for modifier in self.modifiers:
+            out.append({self.wordlist_labels['modifier']:modifier})
 
-        self.io.save_file(file_url=self.intensifier_dict_url, output_content=out)
+        self.io.save_file(file_url=self.modifier_dict_url, output_content=out)
 
     def save_wordlists(self) -> None:
         '''This function converts the input dict into a list for a single word list'''
         
         self.save_emotion_dict()
         self.save_negations()
-        self.save_intensifiers()
+        self.save_modifiers()

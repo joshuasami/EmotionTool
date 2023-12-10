@@ -19,8 +19,8 @@ VALENCE_PAIRS = {
 # Filepath of the negation-wordlist
 NEGATIONS_URL = "test-" +  "lists/negation.csv"
 
-# Filepath of the intensifier-wordlist
-INTENSIFIER_URL = "test-" +  "lists/modifikator.csv"
+# Filepath of the modifier-wordlist
+MODIFIER_URL = "test-" +  "lists/modifikator.csv"
 
 # Filepath of the output-file
 # IMPORTANT: MUST BE A CSV-FILE
@@ -51,7 +51,7 @@ CODER = "JSB"
 ET_LABELS = {
     "emotion":"Emotion", 
     "reduction":"Reduction", 
-    "intensifier":"Intensifier", 
+    "modifier":"Modifier", 
     "negation":"Negation", 
     "problems": "Problems", 
     "coder": "Coder"
@@ -61,7 +61,7 @@ WORDLIST_LABELS = {
     "emotion": "emotion",
     "reduction": "reduction",
     "valence": "valence",
-    "intensifier": "intensifier",
+    "modifier": "modifier",
     "negation": "negation"
 }
 

@@ -17,7 +17,7 @@ class ET:
         self.labels_raising_problem = labels_raising_problem
 
     def check_line(self, line: EmotionLine, labels_raising_problem: list = None) -> EmotionLine:
-        '''This function checks a single line for emotion terms and its connected intensifiers and negations'''
+        '''This function checks a single line for emotion terms and its connected modifiers and negations'''
 
         # explanation of raised problem-codes
         # 0 = match in marked column
@@ -120,7 +120,7 @@ class ET:
 
     def check_for_emotion(self, line: str) -> list[dict]:
         '''This function is the main method of ET
-        if presented with a sentence in string format, it analyzes it for used emotions and its connected intensifiers and negations'''
+        if presented with a sentence in string format, it analyzes it for used emotions and its connected modifiers and negations'''
         
         # the input line is converted into a list of words and empty list for the rest of the line is created
         line = self.str2list(line)
@@ -140,9 +140,9 @@ class ET:
 
             found_emotion = ""
             found_reduction = ""
-            found_intensifier = []
+            found_modifier = []
             found_negation = []
-            found_post_intensifier = []
+            found_post_modifier = []
             found_post_negation = []
 
 
@@ -152,16 +152,16 @@ class ET:
                 line = line[:-1]
                 continue
 
-            # here happens the same for intensifiers, what already happend for the emotion terms
-            # it works almost the same. the only difference is, that there can be multiple intensifiers in a row
+            # here happens the same for modifiers, what already happend for the emotion terms
+            # it works almost the same. the only difference is, that there can be multiple modifiers in a row
             # e.g. "sehr sehr sehr"
-            line, found_intensifier = self.find_matches(line, self.wordlist.get_intensifiers())
+            line, found_modifier = self.find_matches(line, self.wordlist.get_modifiers())
             line, found_negation = self.find_matches(line, self.wordlist.get_negations())
 
             line_rest, found_post_negation = self.find_matches(line_rest, self.wordlist.get_negations(), start_from_beginning=True)
-            line_rest, found_post_intensifier = self.find_matches(line_rest, self.wordlist.get_intensifiers(), start_from_beginning=True)
+            line_rest, found_post_modifier = self.find_matches(line_rest, self.wordlist.get_modifiers(), start_from_beginning=True)
             split_emotion = self.str2list(found_emotion)
-            split_emotion, extra_found_intensifier = self.find_matches(split_emotion, self.wordlist.get_intensifiers(), remove_unmatched=True)
+            split_emotion, extra_found_modifier = self.find_matches(split_emotion, self.wordlist.get_modifiers(), remove_unmatched=True)
 
             split_emotion = self.str2list(found_emotion)
             split_emotion, extra_found_negation = self.find_matches(split_emotion, self.wordlist.get_negations(), remove_unmatched=True)
@@ -184,25 +184,25 @@ class ET:
                 found_reduction = ''
 
             
-            found_emotion = ' '.join(found_negation + found_intensifier + [found_emotion] + found_post_negation + found_post_intensifier)
+            found_emotion = ' '.join(found_negation + found_modifier + [found_emotion] + found_post_negation + found_post_modifier)
             
-            if extra_found_intensifier:
-                found_intensifier = extra_found_intensifier + found_intensifier
+            if extra_found_modifier:
+                found_modifier = extra_found_modifier + found_modifier
 
             if extra_found_negation:
                 found_negation = extra_found_negation + found_negation
 
-            if found_post_intensifier:
-                found_intensifier = found_intensifier + found_post_intensifier
+            if found_post_modifier:
+                found_modifier = found_modifier + found_post_modifier
 
             if found_post_negation:
                 found_negation = found_negation + found_post_negation
 
-            # the found emotion, reduction, intensifier and negation are saved in a dict and appended to the output list
+            # the found emotion, reduction, modifier and negation are saved in a dict and appended to the output list
             out.append(
                 EmotionWord(emotion=found_emotion,
                             reduction=found_reduction,
-                            intensifier=found_intensifier,
+                            modifier=found_modifier,
                             negation=found_negation
                             )
             )
