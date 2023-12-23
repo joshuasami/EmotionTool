@@ -1,8 +1,8 @@
 '''This is the Main Class, kind of like the controll center of the program. It is used to label the data with the help of ET'''
 
-from et import ET
-from et_structure import EmotionLine, DataFrame, EmotionWord
-from user_interface import UserInterface
+from modules.et import ET
+from modules.et_structure import EmotionLine, DataFrame, EmotionWord
+from modules.user_interface import UserInterface
 import copy
 
 
@@ -57,7 +57,7 @@ class EmotionTool:
         checker = ""
         decision_map = {"0": True, "1": False}
         while checker not in decision_map:
-            self.ui.display_message("You have to Options:\n[0] ET can label the list completely for you\n[1] or you go through every line, where isn't a emotion word yet and you can label it by yourself. ET is still helping you with labeling")
+            self.ui.display_message("Are you satisfied with the output?\n[0] I want to abort and make some changes.\n[1] I want to review the lines that aren't labeled yet and label them.")
             checker = self.ui.get_input("What do you want to do?")
 
         automatic_labeling_decision = decision_map.get(checker, False)

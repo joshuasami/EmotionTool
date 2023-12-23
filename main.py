@@ -1,14 +1,15 @@
 '''This is the main file of the EmotionTool. It is the only file you have to run to use the EmotionTool.'''
 
-
 from settings import ET_LABELS, OUTPUT_FILE_URL, INPUT_FILE_URL, ENCODING, SEPERATOR, EMOTION_WORDS_URL, NEGATIONS_URL, MODIFIER_URL, LABELS_RAISING_PROBLEMS, CODER, LABELS_TO_LOOK_THROUGH, LABELS_TO_SHOW, VALENCE_PAIRS, LOGO, NO_EMOTION_FOUND_LABEL, WORDLIST_LABELS, STRING_SEPERATOR
-from io_machine import IOMachine
-from et import ET
-from emotion_tool import EmotionTool
-from user_interface import UserInterface
-from et_structure import Wordlist, DataFrame
+from modules.io_machine import IOMachine
+from modules.et import ET
+from modules.emotion_tool import EmotionTool
+from modules.user_interface import UserInterface
+from modules.et_structure import Wordlist, DataFrame
 
 import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 
 def main():
     '''Main Function'''

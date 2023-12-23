@@ -1,6 +1,6 @@
 """This module includes all structural definitions, which are used for ET"""
 
-from io_machine import IOMachine
+from modules.io_machine import IOMachine
 from typing import Iterator
 
 class EmotionWord:

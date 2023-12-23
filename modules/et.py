@@ -1,7 +1,7 @@
 '''This module contains the ET class, which is used to analyze sentences for emotion terms.'''
 
 import re
-from et_structure import EmotionLine, Wordlist, EmotionWord
+from modules.et_structure import EmotionLine, Wordlist, EmotionWord
 
 class ET:
     '''ET can, equipt with an emotion, modifier and reduction list, analyze sentences for emotion terms '''
