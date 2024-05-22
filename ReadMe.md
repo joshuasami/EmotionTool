@@ -1,4 +1,5 @@
 # EmotionTool (E.T.)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11244222.svg)](https://doi.org/10.5281/zenodo.11244222)
 
 E.T. is a little Coding-Helper for the Children's Emotion Vocabulary Vignettes Test (CEVVT; Streubel et al., 2020). The programm-structure is influenced by the great work of Barchard et al. (2010)
 
