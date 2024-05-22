@@ -1,0 +1,105 @@
+{
+    "general-phrases": {
+        "total": {
+            "de": "gesamt",
+            "en": "total"
+        },
+
+        "skip": {
+            "de": "Überspringen",
+            "en": "skip"
+        },
+
+        "01choice": {
+            "de": "(0 = Nein, 1 = Ja)",
+            "en": "(0 = No, 1 = Yes)"
+
+        },
+        
+        "please-choose": {
+            "de": "Bitte auswählen",
+            "en": "Please choose"
+
+        },
+
+        "correct": {
+            "de": "Ist das richtig?",
+            "en": "Is this correct?"
+        },
+
+        "input": {
+            "de": "Einabge",
+            "en": "Input"
+        }
+    },
+
+    "main-menu":{
+        "welcome": {
+            "de": "Möchten Sie eine neue Liste auswerten oder klicken? (0 = neu, 1 = alt)",
+            "en": "Do you want to code a new list or 'click' an old one? (0 = new, 1 = old)"
+        }
+    },
+
+    "et": {
+        "First-Row-Problem": {
+            "de": "Problem: Emotion in der Verständnisfrage",
+            "en": "Problem: Emotion in the Context-Question"
+        },
+        "No-Reduction-Problem": {
+            "de": "Problem: Keine Reduktion gefunden",
+            "en": "Problem: No reduction found"
+        },
+        "Over-One-Problem": {
+            "de": "Problem: Mehr als ein Emotionswort gefunden",
+            "en": "Problem: More than one emotion word found"
+        },
+        "Nothing-Found-Problem": {
+            "de": "Problem: Kein Emotionswort gefunden",
+            "en": "Problem: No emotion word found"
+        },
+
+        "continue": {
+            "de": "Möchten Sie die Liste nun händisch weiter coden?",
+            "en": "Do you want to continue coding the list?"
+        }
+    },
+
+    "ec": {
+        "emotionsfound": {
+            "de": "Gefundene Emotionen:",
+            "en": "emotion words found:"
+        },
+
+        "own-input": {
+            "de": "eigene Eingabe",
+            "en": "new Input"
+        },
+
+        "99": {
+            "de": "kein Emotionswort (99)",
+            "en": "no emotion word (99)"
+        },
+
+        "next": {
+            "de": "Nächstes?",
+            "en": "Next One?"
+        },
+
+        "nextorback": {
+            "de": "[0] Fertig\n[1] Nächstes\n[2] Wiederholen",
+            "en": "[0] Done\n[1] Next\n[2] Redo"
+        }
+    },
+
+    "errors": {
+        "settings_missing": {
+            "de": "Die Settings-Datei konnte nicht geöffnet werden:",
+            "en": "The settings-file couldn't be open"
+        },
+
+        "own-input": {
+            "de": "eigene Eingabe",
+            "en": "new Input"
+        }
+    }
+}
