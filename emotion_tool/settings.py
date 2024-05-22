@@ -3,43 +3,43 @@
 # IMPORT: Don't save the words, which are written in capital-letters. These are variable-names and changing them will result in an error and break the program!
 
 # Filepath of the input-file
-INPUT_FILE_URL = "in/test_05122023.csv"
+INPUT_FILE_URL = "in/CEVVT_data_masterfile_example.csv"
 
-# Filepath of the Emotion-Dictinary
+# Filepath of the Emotion-Dictionary
 # IMPORTANT: Please name the columns of the dictionary 'emotion', 'reduction', and 'valence'!
-EMOTION_WORDS_URL = "test-" +  "lists/words_valence.csv"
+EMOTION_WORDS_URL = "lists/emotion_words_en.csv"
 
 # If a word has a valence on the key side of the dictionary (the word before the :), the word on the other side is used as a reduction, if there is one negation before the emotion term.
 VALENCE_PAIRS = {
-    "positiv":"negativ",
-    "negativ":"positiv",
+    "positive":"negative",
+    "negative":"positive",
     "neutral":"neutral"
     }
 
 # Filepath of the negation-wordlist
-NEGATIONS_URL = "test-" +  "lists/negation.csv"
+NEGATIONS_URL = "lists/negation_en.csv"
 
 # Filepath of the modifier-wordlist
-MODIFIER_URL = "test-" +  "lists/modifikator.csv"
+MODIFIER_URL = "lists/modifier_en.csv"
 
 # Filepath of the output-file
 # IMPORTANT: MUST BE A CSV-FILE
-OUTPUT_FILE_URL = "test-" +  "out/ETout_KEeKS_LS_EFB_09062023_605-647.csv"
+OUTPUT_FILE_URL = "out/ETout_CEVVT_data_masterfile.csv"
 
 # Columns which are to be searched for emotions by ET
 LABELS_TO_LOOK_THROUGH = [
-    'Verständnisfrage',
-    'Frage 1', 
-    'Nachfrage 1', 
-    'Nachfrage 2', 
-    'Nachfrage 3', 
-    'Nachfrage 4'
+    'Comprehension question',
+    'Main question', 
+    'Follow-up question 1', 
+    'Follow-up question 2', 
+    'Follow-up question 3', 
+    'Follow-up question 4'
     ]
 
 # Columns which raise an error, if a match is found in them
-LABELS_RAISING_PROBLEMS = ['Verständnisfrage']
+LABELS_RAISING_PROBLEMS = ['Comprehension question']
 
-# column-names, which should be shown next to the default columns, when "clicking through the lines".
+# Columns, which should be shown next to the default columns, when "clicking through the lines".
 LABELS_TO_SHOW = ["ID subject", "vignette"]
 
 # Name of the coder, which is noted in the output-file

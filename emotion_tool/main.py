@@ -11,7 +11,6 @@ from modules.emotion_tool import EmotionTool
 from modules.user_interface import UserInterface
 from modules.et_structure import Wordlist, DataFrame
 
-
 def main():
     '''Main Function'''
 
