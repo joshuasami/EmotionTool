@@ -1,0 +1,299 @@
+﻿emotion;reduction;valence
+angewidert;angewidert;negative
+angstig;ängstlich;negative
+Angst;ängstlich;negative
+Ängste;ängstlich;negative
+angsteinflössend;ängstlich;negative
+angsterfüllt;ängstlich;negative
+ängstlich;ängstlich;negative
+angstvoll;ängstlich;negative
+beängstigend;ängstlich;negative
+beängstigt;ängstlich;negative
+verängstigt;ängstlich;negative
+verängstlicht;ängstlich;negative
+ängstigend;ängstlich;negative
+angsthaft;ängstlich;negative
+angespannt;Anspannung;neutral
+Ärger;Ärger;negative
+ärgerlich;Ärger;negative
+ärgert sich;Ärger ;negative
+geärgert;Ärger;negative
+Verägerung;Ärger;negative
+verärgert;Ärger;negative
+Verärgerung;Ärger;negative
+aufgeregt;aufgeregt;neutral
+aufregend;aufgeregt;neutral
+Aufregung;aufgeregt;neutral
+aufgewühlt;aufgewühlt;neutral
+bedauern;Bedauern;negative
+bedroht;Bedrohung;negative
+bedrückt;bedrückt;negative
+begehren;Begehren;positive
+begeistert;Begeisterung;positive
+Begeisterung;Begeisterung;positive
+Begierde;begierig;positive
+Gier;begierig;positive
+gierig;begierig;positive
+Giersucht;begierig;positive
+beruhigt;Beruhigung;positive
+Besorgnis;besorgt;negative
+besorgt;besorgt;negative
+Besorgtheit;besorgt;negative
+sich sorgend;besorgt;negative
+Sorge;besorgt;negative
+Sorgen;besorgt;negative
+sorgenbehaftet;besorgt;negative
+sorgend;besorgt;negative
+sorgenvoll;besorgt;negative
+sorglich;besorgt;negative
+sorgvoll;besorgt;negative
+bestürzt;bestürzt;negative
+betrübt;betrübt;negative
+beunruhigt;Beunruhigung;negative
+bewundernd;Bewunderung;positive
+bewundert;Bewunderung;positive
+Bewunderung;Bewunderung;positive
+bockig;bockig;negative
+dankbar;dankbar;positive
+Dankbarkeit;dankbar;positive
+deprimiert;deprimiert;negative
+Eifersucht;eifersüchtig;negative
+eifersüchtig;eifersüchtig;negative
+einsam;einsam;negative
+Einsamkeit;einsam;negative
+vereinsamt;einsam;negative
+eklig;Ekel;negative
+angeeckelt;Ekel;negative
+angeekelt;Ekel;negative
+eckelhaft;Ekel;negative
+ecklig;Ekel;negative
+Ekel;Ekel;negative
+Ekelgefühl;Ekel;negative
+ekelhaft;Ekel;negative
+ekelig;Ekel;negative
+ekelt ;Ekel;negative
+ekelt sich;Ekel;negative
+geekelt;Ekel;negative
+verekelt;Ekel;negative
+Ekelheit;Ekel;negative
+ekelt;Ekel;negative
+ekliges;Ekel;negative
+empört;Empörung;negative
+entsetzt;entsetzt;negative
+entspannend;entspannt;positive
+entspannt;entspannt;positive
+enttäuschend;enttäuscht;negative
+enttäuscht;enttäuscht;negative
+Enttäuschung;enttäuscht;negative
+entzückt;Entzückung;positive
+verzückt;Entzückung;positive
+erleichtert;Erleichterung;positive
+erregt;Erregung;neutral
+erschrecken;erschrocken;negative
+erschreckt;erschrocken;negative
+erschreckt sich;erschrocken;negative
+erschrocken;erschrocken;negative
+Schreck;erschrocken;negative
+schrecken;erschrocken;negative
+verschreckt;erschrocken;negative
+erschreckend;erschrocken;negative
+erstaunt;Erstaunen;positive
+euphorisch;euphorisch;positive
+fasziniert;Faszination;positive
+Faszination;Faszination;positive
+faszinierend;Faszination;positive
+erfreut;Freude;positive
+Freude;Freude;positive
+freudig;Freude;positive
+freudlich;Freude;positive
+freudvoll;Freude;positive
+freut;Freude;positive
+freut sich;Freude;positive
+gefreut;Freude;positive
+sich freuen;Freude;positive
+sich freut;Freude;positive
+froh;froh;positive
+fröhlich;fröhlich;positive
+Fröhlichkeit;fröhlich;positive
+Frust;frustriert;negative
+Frustration;frustriert;negative
+frustrierend;frustriert;negative
+frustriert;frustriert;negative
+gefrustet;frustriert;negative
+Furcht;Furcht;negative
+fürchtet sich;Furcht;negative
+geborgen;geborgen;positive
+Geborgenheit;geborgen;positive
+gelassen;Gelassenheit;positive
+genervt;genervt;negative
+Genervtheit;genervt;negative
+nervt;genervt;negative
+geniert;genieren;negative
+geniert sich;genieren;negative
+gereizt;gereizt;negative
+beglückt;glücklich;positive
+Glück;glücklich;positive
+glücklich;glücklich;positive
+glückselig;glücklich;positive
+Glückseligkeit;glücklich;positive
+glücklicher;glücklich;positive
+grantig;grantig;negative
+grimmig;grimmig;negative
+gruselig;Grusel;negative
+gruseligen;Grusel;negative
+gruselt sich;Grusel ;negative
+happy;happy;positive
+Hoffnung;Hoffnung;positive
+Hoffnungsvoll;Hoffnung;positive
+hofft;Hoffnung;positive
+Interesse;interessiert;positive
+interessiert;interessiert;positive
+bekümmert;Kummer;negative
+Kummer;Kummer;negative
+gelangweilt;langweilig;neutral
+langweilig;langweilig;neutral
+geliebt;Liebe;positive
+Liebe;Liebe;positive
+liebt;Liebe;positive
+verliebt;Liebe;positive
+Lust;Lust;positive
+lustvoll;Lust;positive
+keine Lust;lustlos;negative
+lostlos;lustlos;negative
+Lustlosigkeit;lustlos;negative
+leid tun;Mitleid;negative
+Mitleid;Mitleid;negative
+mürrisch;mürrisch;negative
+blöd;negative;negative
+böse;negative;negative
+doof;negative;negative
+fürchterlich;negative;negative
+mies;negative;negative
+nicht fröhlich;negative;negative
+nicht glücklich;negative;negative
+nicht gut;negative;negative
+nicht lieb;negative;negative
+nicht lustig;negative;negative
+nicht schön;negative;negative
+nicht toll;negative;negative
+nicht wohl;negative;negative
+schlecht;negative;negative
+schlimm;negative;negative
+schrecklich;negative;negative
+trübsinnig;negative;negative
+unangenehm;negative;negative
+unbehaglich;negative;negative
+unfröhlich;negative;negative
+ungut;negative;negative
+unwohl;negative;negative
+Unwohlsein;negative;negative
+unheimlich;negative;negative
+mulmig;negative ;negative
+nicht so;negative ;negative
+schiete;negative ;negative
+beneidet;neidisch;negative
+Neid;neidisch;negative
+Neiderfüllt;neidisch;negative
+neidig;neidisch;negative
+neidisch;neidisch;negative
+nervös;nervös;neutral
+Neugierde;neugierig;positive
+neugierig;neugierig;positive
+niedergeschlagen;Niedergeschlagenheit;negative
+nostalgisch;Nostalgie;neutral
+Panik;Panik;negative
+panisch;Panik;negative
+peinlich;peinlich;negative
+Peinlichkeit;peinlich;negative
+peinliches;peinlich;negative
+angenehm;positive;positive
+bezaubert;positive;positive
+doll;positive;positive
+freundlich;positive;positive
+großartig;positive;positive
+gut;positive;positive
+gutes Gefühl;positive;positive
+hervorragend;positive;positive
+klasse;positive;positive
+lieb;positive;positive
+lustig;positive;positive
+nett;positive;positive
+nicht schlecht;positive;positive
+phantastisch;positive;positive
+schön;positive;positive
+sorglos;positive;positive
+Spaß;positive;positive
+spaßig;positive;positive
+super;positive;positive
+toll;positive;positive
+überragend;positive;positive
+verzaubert;positive;positive
+wohl;positive;positive
+wohlig;positive;positive
+wunderbar;positive;positive
+wundervoll;positive;positive
+zauberhaft;positive;positive
+nicht traurig;positive;positive
+bereuend;Reue;negative
+bereut;Reue;negative
+Reue;Reue;negative
+reuevoll;Reue;negative
+reuig;Reue;negative
+reumütig;Reue;negative
+sauer;sauer;negative
+beschämend;Scham;negative
+beschämt;Scham;negative
+geschämt;Scham;negative
+Scham;Scham;negative
+schämen;Scham;negative
+Schamgefühl;Scham;negative
+schamig;Scham;negative
+schämlich;Scham;negative
+schämt;Scham;negative
+schämt sich;Scham;negative
+Schamvoll;Scham;negative
+verschämt;Scham;negative
+geschockt;Schock;negative
+schockiert;Schock;negative
+Schuld;schuldig;negative
+schuldbewusst;schuldig;negative
+Schuldgefühl;schuldig;negative
+Schuldgefühle;schuldig;negative
+schuldhaft;schuldig;negative
+schuldig;schuldig;negative
+schuldvoll;schuldig;negative
+sehned;Sehnsucht;negative
+Sehnsucht;Sehnsucht;negative
+sehnsüchtig;Sehnsucht;negative
+sehnsuchtsvoll;Sehnucht;negative
+stolz;stolz;positive
+gestresst;Stress;negative
+riesen traurig;traurig;negative
+Trauer;traurig;negative
+traurig;traurig;negative
+Traurigkeit;traurig;negative
+überraschend;Überraschung;neutral
+überrascht;Überraschung;neutral
+Überraschung;Überraschung;neutral
+unglücklich;unglücklich;negative
+Unzfriedenheit;unzufrieden;negative
+unzufrieden;unzufrieden;negative
+Verlangen;Verlangen;positive
+verlangend;Verlangen;positive
+verlegen;verlegen;negative
+Verlegenheit;verlegen;negative
+verzweifelt;verzweifelt;negative
+Verzweiflung;verzweifelt;negative
+Vorfreude;Vorfreude;positive
+Vorfreudig;Vorfreude;positive
+Wehmut;Wehmut;negative
+wehmütig;Wehmut;negative
+Wut;wütend;negative
+wütend;wütend;negative
+wütig;wütend;negative
+erzürnt;Zorn;negative
+Zorn;Zorn;negative
+zornig;Zorn;negative
+zufrieden;zufrieden;positive
+Zufriedenheit;zufrieden;positive
+zuversichtlich;Zuversicht;positive
