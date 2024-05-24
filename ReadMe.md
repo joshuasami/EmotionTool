@@ -31,7 +31,7 @@ We provide example input lists and input files, which are already in the "lists"
 
 ## Citation
 
-If you use E.T. in your research, please cite the following works:
+If you use E.T. in your research, please cite the following work:
 
     Bräuer, J. S., & Streubel, B. (2024). EmotionTool (ET1.0). Zenodo. https://doi.org/10.5281/zenodo.11244222
 
