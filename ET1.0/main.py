@@ -34,7 +34,7 @@ def main():
     wordlist = Wordlist(io=io, wordlist_labels=WORDLIST_LABELS, emotions_dict_url=EMOTION_WORDS_URL, modifier_dict_url=MODIFIER_URL, negations_dict_url=NEGATIONS_URL)
 
     # creating ET
-    et = ET(wordlist=wordlist, valence_pairs=VALENCE_PAIRS, labels_raising_problem=LABELS_RAISING_PROBLEMS)
+    et = ET(wordlist=wordlist, valence_pairs=VALENCE_PAIRS, labels_raising_problem=LABELS_RAISING_PROBLEMS, string_seperator=STRING_SEPERATOR)
 
     # Creating the DataFrame instance. It automatically loads the input file and converts it into a list of EmotionLines
     df = DataFrame(input_file_url=INPUT_FILE_URL, output_file_url=OUTPUT_FILE_URL, io=io, labels_to_look_through=LABELS_TO_LOOK_THROUGH, et_labels=ET_LABELS)

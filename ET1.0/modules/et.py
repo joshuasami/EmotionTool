@@ -6,7 +6,7 @@ from modules.et_structure import EmotionLine, Wordlist, EmotionWord
 class ET:
     '''ET can, equipt with an emotion, modifier and reduction list, analyze sentences for emotion terms '''
 
-    def __init__(self, wordlist: Wordlist, valence_pairs: dict[str], labels_raising_problem: list[str] = None) -> None:
+    def __init__(self, wordlist: Wordlist, valence_pairs: dict[str], labels_raising_problem: list[str] = None, string_seperator: str = ',') -> None:
         
         self.wordlist = wordlist
 
@@ -15,6 +15,8 @@ class ET:
         if labels_raising_problem is None:
             labels_raising_problem = []
         self.labels_raising_problem = labels_raising_problem
+
+        self.string_seperator = string_seperator
 
     def check_line(self, line: EmotionLine, labels_raising_problem: list = None) -> EmotionLine:
         '''This function checks a single line for emotion terms and its connected modifiers and negations'''
@@ -123,89 +125,90 @@ class ET:
         if presented with a sentence in string format, it analyzes it for used emotions and its connected modifiers and negations'''
         
         # the input line is converted into a list of words and empty list for the rest of the line is created
-        line = self.str2list(line)
+        line_parts = [self.str2list(l) for l in line.split(self.string_seperator)]
         line_rest = []
         
         # exits, if the line is empty
-        if not line:
+        if not line_parts:
             return []
 
         # the output list is created
         out = []
 
-    
-        # everytime a value is found, its deleted from the list of the input line
-        # when the line is empty, the loop is exited
-        while len(line) > 0:
+        for line_part in line_parts:
 
-            found_emotion = ""
-            found_reduction = ""
-            found_modifier = []
-            found_negation = []
-            found_post_modifier = []
-            found_post_negation = []
+            # everytime a value is found, its deleted from the list of the input line
+            # when the line is empty, the loop is exited
+            while len(line_part) > 0:
+
+                found_emotion = ""
+                found_reduction = ""
+                found_modifier = []
+                found_negation = []
+                found_post_modifier = []
+                found_post_negation = []
 
 
-            line, found_emotion = self.get_longest_match(line, self.wordlist.get_emotions())
-            if found_emotion == "":
-                line_rest.insert(0,line[-1])
-                line = line[:-1]
-                continue
+                line_part, found_emotion = self.get_longest_match(line_part, self.wordlist.get_emotions())
+                if found_emotion == "":
+                    line_rest.insert(0,line_part[-1])
+                    line_part = line_part[:-1]
+                    continue
 
-            # here happens the same for modifiers, what already happend for the emotion terms
-            # it works almost the same. the only difference is, that there can be multiple modifiers in a row
-            # e.g. "sehr sehr sehr"
-            line, found_modifier = self.find_matches(line, self.wordlist.get_modifiers())
-            line, found_negation = self.find_matches(line, self.wordlist.get_negations())
+                # here happens the same for modifiers, what already happend for the emotion terms
+                # it works almost the same. the only difference is, that there can be multiple modifiers in a row
+                # e.g. "sehr sehr sehr"
+                line_part, found_modifier = self.find_matches(line_part, self.wordlist.get_modifiers())
+                line_part, found_negation = self.find_matches(line_part, self.wordlist.get_negations())
 
-            line_rest, found_post_negation = self.find_matches(line_rest, self.wordlist.get_negations(), start_from_beginning=True)
-            line_rest, found_post_modifier = self.find_matches(line_rest, self.wordlist.get_modifiers(), start_from_beginning=True)
-            split_emotion = self.str2list(found_emotion)
-            split_emotion, extra_found_modifier = self.find_matches(split_emotion, self.wordlist.get_modifiers(), remove_unmatched=True)
+                line_rest, found_post_negation = self.find_matches(line_rest, self.wordlist.get_negations(), start_from_beginning=True)
+                line_rest, found_post_modifier = self.find_matches(line_rest, self.wordlist.get_modifiers(), start_from_beginning=True)
+                split_emotion = self.str2list(found_emotion)
+                split_emotion, extra_found_modifier = self.find_matches(split_emotion, self.wordlist.get_modifiers(), remove_unmatched=True)
 
-            split_emotion = self.str2list(found_emotion)
-            split_emotion, extra_found_negation = self.find_matches(split_emotion, self.wordlist.get_negations(), remove_unmatched=True)
+                split_emotion = self.str2list(found_emotion)
+                split_emotion, extra_found_negation = self.find_matches(split_emotion, self.wordlist.get_negations(), remove_unmatched=True)
+                
+                
+                # if there was a negation found, the reduction is set to the opposite of the reduction connected to the found emotion
             
-            
-            # if there was a negation found, the reduction is set to the opposite of the reduction connected to the found emotion
-        
-            if len(found_negation) + len(found_post_negation) == 1:
-                try:
-                    found_reduction = self.valence_pairs[self.wordlist.get_valence(found_emotion)]
-                except KeyError:
+                if len(found_negation) + len(found_post_negation) == 1:
+                    try:
+                        found_reduction = self.valence_pairs[self.wordlist.get_valence(found_emotion)]
+                    except KeyError:
+                        found_reduction = ''
+                
+
+                elif len(found_negation) + len(found_post_negation) == 0:
+                    # the reduction connected to the found emotion is saved
+                    found_reduction = self.wordlist.get_reduction(found_emotion)
+
+                else:
                     found_reduction = ''
-            
 
-            elif len(found_negation) + len(found_post_negation) == 0:
-                # the reduction connected to the found emotion is saved
-                found_reduction = self.wordlist.get_reduction(found_emotion)
+                
+                found_emotion = ' '.join(found_negation + found_modifier + [found_emotion] + found_post_negation + found_post_modifier)
+                
+                if extra_found_modifier:
+                    found_modifier = extra_found_modifier + found_modifier
 
-            else:
-                found_reduction = ''
+                if extra_found_negation:
+                    found_negation = extra_found_negation + found_negation
 
-            
-            found_emotion = ' '.join(found_negation + found_modifier + [found_emotion] + found_post_negation + found_post_modifier)
-            
-            if extra_found_modifier:
-                found_modifier = extra_found_modifier + found_modifier
+                if found_post_modifier:
+                    found_modifier = found_modifier + found_post_modifier
 
-            if extra_found_negation:
-                found_negation = extra_found_negation + found_negation
+                if found_post_negation:
+                    found_negation = found_negation + found_post_negation
 
-            if found_post_modifier:
-                found_modifier = found_modifier + found_post_modifier
-
-            if found_post_negation:
-                found_negation = found_negation + found_post_negation
-
-            # the found emotion, reduction, modifier and negation are saved in a dict and appended to the output list
-            out.append(
-                EmotionWord(emotion=found_emotion,
-                            reduction=found_reduction,
-                            modifier=found_modifier,
-                            negation=found_negation
-                            )
-            )
+                # the found emotion, reduction, modifier and negation are saved in a dict and appended to the output list
+                out.append(
+                    EmotionWord(emotion=found_emotion,
+                                reduction=found_reduction,
+                                modifier=found_modifier,
+                                negation=found_negation
+                                )
+                )
             
         return out
     

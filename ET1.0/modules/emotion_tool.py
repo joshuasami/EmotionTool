@@ -117,6 +117,14 @@ class EmotionTool:
 
                 if not continue_labeling:
                     break
+            
+            # if we went to all problems and none are left, we can stop to continue labeling
+            else:
+                if self.df.get_unlabelled_count() == 0:
+                    continue_labeling = False
+                    self.ui.display_message('You solved all problems. You have 0 problems left.')
+
+        
 
     def add_words(self, line: EmotionLine) -> bool:
         '''This function adds the words from the line to et'''
