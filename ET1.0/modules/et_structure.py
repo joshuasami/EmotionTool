@@ -234,6 +234,16 @@ class DataFrame:
                     out[problem] = 1
 
         return out
+    
+    def get_unlabelled_count(self) -> int:
+        '''This method gives you the number of unlabele'''
+
+        out = 0
+
+        for line in self.iterate_rows():
+            out += 0 if line.is_labelled else 1
+
+        return out
 
 class Wordlist:
     '''This class stores the three wordlists'''

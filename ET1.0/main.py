@@ -33,8 +33,14 @@ def main():
     # loading wordlist
     wordlist = Wordlist(io=io, wordlist_labels=WORDLIST_LABELS, emotions_dict_url=EMOTION_WORDS_URL, modifier_dict_url=MODIFIER_URL, negations_dict_url=NEGATIONS_URL)
 
+    # checking if the valence words in the wordlist are in the settings
+    for emotion, values in wordlist.emotion_dict.items():
+        if values['valence'] not in VALENCE_PAIRS:
+            ui.display_message(f"Valence word '{values['valence']}' of the emotion '{emotion}' was not found in VALENCE_PAIRS in the settings. The keys in VALENCE_PAIRS have to be the same as the valence words in the wordlist. Please fix that.")
+            sys.exit(0)
+
     # creating ET
-    et = ET(wordlist=wordlist, valence_pairs=VALENCE_PAIRS, labels_raising_problem=LABELS_RAISING_PROBLEMS)
+    et = ET(wordlist=wordlist, valence_pairs=VALENCE_PAIRS, labels_raising_problem=LABELS_RAISING_PROBLEMS, string_seperator=STRING_SEPERATOR)
 
     # Creating the DataFrame instance. It automatically loads the input file and converts it into a list of EmotionLines
     df = DataFrame(input_file_url=INPUT_FILE_URL, output_file_url=OUTPUT_FILE_URL, io=io, labels_to_look_through=LABELS_TO_LOOK_THROUGH, et_labels=ET_LABELS)
